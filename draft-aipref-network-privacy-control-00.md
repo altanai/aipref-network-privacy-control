@@ -2,8 +2,9 @@
 title: "AI Preferences for Privacy-Preserving Network Traffic Analysis"
 abbrev: "AI Network Privacy Control"
 category: std
-docname: draft-aipref-network-privacy-control-00-latest
-submissiontype: IETF
+
+docname: draft-aipref-network-privacy-control-latest
+submissiontype: IETF  # also: "independent", "editorial", "IAB", or "IRTF"
 number:
 date:
 consensus: true
@@ -39,6 +40,8 @@ informative:
   RFC6973:
   RFC7258:
   RFC8446:
+
+...
 
 --- abstract
 
