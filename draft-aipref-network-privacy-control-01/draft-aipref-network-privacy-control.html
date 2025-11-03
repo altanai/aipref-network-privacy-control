@@ -1,0 +1,3349 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Greek,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>AI Preferences for Privacy-Preserving Network Traffic Analysis</title>
+<meta content="Altanai Bisht" name="author">
+<meta content="
+       This document defines a framework for expressing and enforcing preferences about how Artificial Intelligence (AI) agents collect, process, and analyze network traffic data for the purposes of detecting network anomalies, unfair usage patterns, and implementing intelligent network control. The framework enables network operators and users to specify granular preferences regarding what traffic characteristics may be exposed to AI systems while maintaining privacy guarantees and preventing sensitive information leakage. 
+       This work extends the AI Preferences vocabulary to the domain of network traffic analysis, providing mechanisms for reconciling competing privacy requirements with the operational need for intelligent network monitoring and control. 
+    " name="description">
+<meta content="xml2rfc 3.31.0" name="generator">
+<meta content="AI preferences" name="keyword">
+<meta content="network privacy" name="keyword">
+<meta content="traffic analysis" name="keyword">
+<meta content="leak detection" name="keyword">
+<meta content="draft-aipref-network-privacy-control-latest" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.31.0
+    Python 3.12.12
+    ConfigArgParse 1.7
+    google-i18n-address 3.1.1
+    intervaltree 3.1.0
+    Jinja2 3.1.6
+    lxml 5.3.1
+    platformdirs 4.5.0
+    pycountry 24.6.1
+    PyYAML 6.0.2
+    requests 2.32.5
+    wcwidth 0.2.14
+-->
+<link href="draft-aipref-network-privacy-control.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Lora SemiBold'), local('Lora-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: italic;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-greek.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Sofia Sans Semi Condensed';
+  font-style: normal;
+  font-weight: 1 1000;
+  src: url('https://martinthomson.github.io/rfc-css/fonts/sofiasanssemicondensed-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light dark;
+  --background-color: #fff;
+  --text-color: #222;
+  --title-color: #191919;
+  --link-color: #2a6496;
+  --highlight-color: #f9f9f9;
+  --line-color: #eee;
+  --pilcrow-weak: #ddd;
+  --pilcrow-strong: #bbb;
+  --small-font-size: 14.5px;
+  --font-mono: 'Oxygen Mono', monospace;
+  --font-title: "Sofia Sans Semi Condensed", sans-serif;
+  scrollbar-color: #bbb #eee;
+}
+body {
+  max-width: 600px;
+  margin: 75px auto;
+  padding: 0 5px;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  font: 16px/22px "Lora", serif;
+  scroll-behavior: smooth;
+}
+
+.ears {
+  display: none;
+}
+
+/* headings */
+section {
+  clear: both;
+}
+.section-number {
+  padding-right: 0.5em;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: 680;
+  margin: 0.8em 0 0.3em;
+  font-size-adjust: 0.5;
+  color: var(--title-color);
+}
+h1#title {
+  font-size: 32px;
+  line-height: 40px;
+  clear: both;
+}
+h1#title, h1#rfcnum {
+  margin: 1.5em 0 0.2em;
+}
+h1#rfcnum + h1#title {
+  margin: 0.2em 0;
+}
+
+h1, h2, h3 {
+  font-size: 22px;
+  line-height: 27px;
+}
+h4, h5, h6 {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+/* general structure */
+.author {
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+#abstract+p {
+  font-size: 18px;
+  line-height: 24px;
+}
+#abstract+p code, #abstract+p samp, #abstract+p tt {
+  font-size: 16px;
+  line-height: 0;
+}
+
+p {
+  padding: 0;
+  margin: 0.5em 0;
+  text-align: left;
+}
+div {
+  margin: 0;
+}
+.alignRight.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignRight.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignRight {
+  margin: 1em 0;
+}
+.alignRight > *:first-child {
+  border: none;
+  margin: 0;
+  float: right;
+  clear: both;
+}
+.alignRight > *:nth-child(2) {
+  clear: both;
+  display: block;
+  border: none;
+}
+svg {
+  display: block;
+}
+/* font-family isn't space-separated, but =~ will have to do */
+svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
+  font-family: var(--font-mono);
+}
+.alignCenter.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignCenter.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignCenter {
+  margin: 1em 0;
+}
+.alignCenter > *:first-child {
+  border: none;
+  /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
+     support flexbox yet.
+  */
+  display: table;
+  margin: 0 auto;
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 0.5em 2em;
+  & :is(ol, ul) {
+    margin-left: 1em;
+  }
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+  & li {
+    margin-top: 0.5em;
+  }
+}
+:is(ul, ol).compact, .ulCompact, .olCompact {
+  margin: 0 0 0 2em;
+  & li {
+    margin: 0;
+    & :first-child { margin-top: 0; }
+    & :last-child { margin-bottom: 0; }
+  }
+}
+
+/* definition lists */
+dl {
+  clear: left;
+  --indent: 3ch;
+  /* --indent: attr(indent ch); not supported in any browser, but we can dream */
+  &.olPercent {
+    --indent: 5ch;
+    & > dt {
+      min-width: calc(var(--indent) - 2ch);
+    }
+  }
+  &.olPercent > dt {
+    float: none;
+  }
+
+  dl > dd > & {
+    margin-top: 0.5em;
+    margin-bottom: 0;
+  }
+}
+dl:not(.dlNewline) > dt {
+  float: left;
+  margin-right: 2ch;
+  min-width: 8ch;
+}
+dl > dd {
+  margin-bottom: .8em;
+  margin-left: var(--indent) !important; /* stupid element overrides */
+  min-height: 2ex;
+}
+:is(dl.compact, .dlCompact) > dd {
+  margin-bottom: 0;
+  & > :is(:first-child, .break:first-child + *) {
+    margin-top: 0;
+  }
+  & > :is(:last-child) {
+    margin-bottom: 0;
+  }
+}
+:is(dd, span).break {
+  display: none;
+}
+
+/* links */
+a, a[href].selfRef:hover {
+  text-decoration: none;
+}
+a[href] {
+  color: var(--link-color);
+}
+a[href].selfRef, .iref + a[href].internal {
+  color: var(--text-color);
+}
+a[href]:hover {
+  text-decoration: underline;
+}
+a[href].selfRef:hover {
+  background-color: var(--highlight-color);
+}
+a.xref:is(.cite, .auto), :is(#status-of-memo, #copyright) a {
+  white-space: nowrap;
+}
+
+/* Figures */
+tt, code, pre {
+  background-color: var(--highlight-color);
+  font: 14px/22px var(--font-mono);
+}
+tt, code {
+  /* changing the font for inline elements leads to different ascender
+     and descender heights; as we want to retain baseline alignment,
+     remove leading to avoid altering the final height of lines
+     note: this fails if these blocks take an entire line,
+     a different solution would be great */
+  line-height: 0;
+}
+:is(h1, h2, h3, h4, h5, h6) :is(tt, code) {
+  font-size: 84%;
+}
+pre {
+  border: 1px solid var(--line-color);
+  font-size: 13.5px;
+  line-height: 16px;
+  letter-spacing: -0.2px;
+  margin: 5px;
+  padding: 5px;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0.5em 0;
+  padding: 0;
+}
+figure blockquote {
+  margin: 0.8em 0.4em 0.4em;
+}
+figcaption, caption {
+  font-style: italic;
+  margin: 0.5em 1.5em;
+  text-align: left;
+  caption-side: bottom;
+}
+@media screen {
+  /* Auto-collapse boilerplate. */
+  :is(#status-of-memo, #copyright) p {
+    margin: -2px 0;
+    max-height: 0;
+    transition: max-height 2s ease, margin 0.5s ease 0.5s;
+    overflow: hidden;
+  }
+  :is(#status-of-memo, #copyright):hover p,
+  :is(#status-of-memo, #copyright) h2:target ~ p {
+    margin: 0.5em 0;
+    max-height: 500px;
+    overflow: auto;
+  }
+  pre, svg {
+    display: inline-block;
+    /* In the horizontal direction, sometimes people make over-sized figures.
+       Scrollbars for those is therefore necessary: auto adds them as necessary..
+       In the vertical direction, the line-height can combine with the font
+       asender/descender height to produce scrollbars: hidden avoids that. */
+    overflow: auto hidden;
+  }
+  pre {
+    max-width: 100%;
+    width: calc(100% - 22px - 1em);
+  }
+  svg {
+    max-width: calc(100% - 22px - 1em);
+  }
+  figure pre {
+    display: block;
+    width: calc(100% - 25px);
+  }
+  :is(pre, svg) + .pilcrow {
+    display: inline-block;
+    vertical-align: text-bottom;
+    padding-bottom: 8px;
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 0 2em;
+  font-style: italic;
+}
+blockquote {
+  margin: 1em 0;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+
+/* tables */
+table {
+  width: auto;
+  max-width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+}
+table.right {
+  margin-left: auto;
+}
+table.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+table.left {
+  margin-right: auto;
+}
+table .text-left {
+  text-align: left;
+}
+table .text-center {
+  text-align: center;
+}
+table .text-right {
+  text-align: right;
+}
+
+thead, tbody {
+  border: 1px solid var(--line-color);
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 5px 10px;
+}
+th {
+  background-color: var(--line-color);
+}
+:is(tr:nth-child(2n), thead+tbody > tr:nth-child(2n+1)) > td {
+  background-color: var(--background-color);
+}
+:is(tr:nth-child(2n+1), thead+tbody > tr:nth-child(2n)) > td {
+  background-color: var(--highlight-color);
+}
+table caption {
+  margin: 0;
+  padding: 3px 0 3px 1em;
+}
+table p {
+  margin: 0;
+}
+
+/* pilcrow */
+a.pilcrow {
+  margin-left: 3px;
+  opacity: 0.2;
+  user-select: none;
+  &[href] {
+    color: var(--pilcrow-weak);
+    &:hover { text-decoration: none; }
+  }
+}
+@media not print {
+  :hover > a.pilcrow {
+    opacity: 1;
+  }
+  a.pilcrow[href]:hover {
+    color: var(--pilcrow-strong);
+    background-color: transparent;
+  }
+}
+@media print {
+  a.pilcrow {
+    display: none;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid var(--line-color);
+}
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: 600;
+  font-size: var(--small-font-size);
+}
+.role {
+  font-variant: all-small-caps;
+}
+sub, sup {
+  line-height: 1;
+  font-size: 80%;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: var(--small-font-size);
+  line-height: 18px;
+  --identifier-width: 15ch;
+  & dt {
+    width: var(--identifier-width);
+    min-width: var(--identifier-width);
+    clear: left;
+    float: left;
+    text-align: right;
+    margin-right: 1ch;
+  }
+  & dd {
+    margin: 0;
+    margin-left: calc(1em + var(--identifier-width)) !important;
+    min-width: 5em;
+  }
+  & .authors {
+    & .author {
+      display: inline-block;
+      margin-right: 1.5em;
+    }
+    & .org {
+      font-style: italic;
+    }
+  }
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #999;
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+}
+.docInfo .prepared {
+  float: right;
+}
+
+/* table of contents */
+#toc {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+
+  & nav {
+    & ul {
+      margin: 0 0.5em 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    & li {
+      line-height: 1.3em;
+      margin: 2px 0;
+      padding-left: 1.2em;
+      text-indent: -1.2em;
+    }
+  }
+  & a.xref {
+    white-space: normal;
+  }
+}
+
+.references {
+  & > dt {
+    text-align: right;
+    font-weight: bold;
+    min-width: 10ch;
+    margin-right: 1.5ch;
+    &:target::before {
+      content: "⇒";
+      margin: 0 10px 0 -25px;
+    }
+  }
+  & > dd {
+    margin-left: 12ch !important;
+    overflow: visible;
+    & .refInstance {
+      margin-bottom: 0.8em;
+    }
+    & .ascii {
+      margin-bottom: 0.25em;
+    }
+  }
+}
+
+#rfc\.index\.index + ul {
+  margin-left: 0;
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  max-width: 20em;
+  margin: 1em auto 1em 0;
+
+  & .nameRole {
+    font-weight: 700;
+    margin-left: 0;
+  }
+  & .label {
+    margin: 0.5em 0;
+  }
+  & .type {
+    display: none;
+  }
+  & .alternative-contact {
+    margin: 0.5em 0 0.25em 0;
+  }
+  & .non-ascii {
+    margin: 0 0 0 2em;
+  }
+  & div.left {
+    text-align: left;
+  }
+  & div.right {
+    text-align: right;
+  }
+}
+
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+@media (min-width: 500px) {
+  #authors-addresses > section {
+    column-count: 2;
+    column-gap: 20px;
+  }
+  #authors-addresses > section > h2 {
+    column-span: all;
+  }
+  /* hack for break-inside: avoid-column */
+  #authors-addresses address {
+    display: inline-block;
+    break-inside: avoid-column;
+  }
+}
+
+/* Comments */
+.rfcEditorRemove p:first-of-type {
+  font-style: italic;
+}
+.cref {
+  background-color: rgba(249, 232, 105, 0.3);
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+
+@media screen {
+  #toc nav {
+    font-family: var(--font-title);
+    font-weight: 360;
+    & > ul { margin-bottom: 2em; }
+    & ul {
+      margin: 0 0 0 4px;
+      & :is(p, li) {
+        margin: 2px 0;
+      }
+    }
+  }
+  #toc a.toplink {
+    float: right;
+  }
+}
+@media not screen {
+  #toc a.toplink {
+    display: none;
+  }
+}
+
+
+/* TOC layout for smaller screens */
+@media screen and (max-width: 929px) {
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 1px 0 0 0;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    opacity: 0.6;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 2px 0 2px 6px;
+    padding-right: 1em;
+    font-size: 18px;
+    line-height: 24px;
+    min-width: 190px;
+    text-align: right;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+    &::before { /* css hamburger */
+      float: right;
+      position: relative;
+      width: 1em;
+      height: 1px;
+      left: -164px;
+      margin: 8px 0 0 0;
+      background: white none repeat scroll 0 0;
+      box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+      content: "";
+    }
+  }
+  #toc nav {
+    display: none;
+    background-color: var(--background-color);
+    padding: 0.5em 1em 1em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    height: calc(100vh - 48px);
+    border-left: 1px solid #ddd;
+  }
+  #toc.active {
+    opacity: 1;
+    & nav { display: block; }
+  }
+  /* Make the collapsed ToC header render white on gray also when it's a link */
+  #toc h2 a,
+  #toc h2 a:is(:link, :focus, :hover),
+  #toc a.toplink,
+  #toc a.toplink:hover {
+    color: white;
+    background-color: #444;
+    text-decoration: none;
+  }
+  #toc a.toplink {
+    margin: 2px 0.5em 0;
+  }
+}
+
+/* TOC layout for wide screens */
+@media screen and (min-width: 930px) {
+  body {
+    padding-right: 360px;
+    padding-right: calc(min(180px + 20%, 500px));
+  }
+  #toc {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    right: calc(50vw - 480px);
+    width: 312px;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 0.25em 1em 1em 0;
+  }
+  #toc nav {
+    display: block;
+    height: calc(90vh - 84px);
+    bottom: 0;
+    padding: 0.5em 0 2em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+  #toc a.toplink {
+    margin: 8px 0.5em 0;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc, #n-introduction {
+    page-break-before: always;
+  }
+  #toc {
+    border-top: none;
+    padding-top: 0;
+  }
+  figure, pre, .vcard {
+    page-break-inside: avoid;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  :is(h2, h3, h4, h5, h6)+*, dd {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+}
+
+/* Dark mode. */
+@media (prefers-color-scheme: dark) {
+:root {
+  --background-color: #121212;
+  --text-color: #f0f0f0;
+  --title-color: #fff;
+  --link-color: #4da4f0;
+  --highlight-color: #282828;
+  --line-color: #444;
+  --pilcrow-weak: #444;
+  --pilcrow-strong: #666;
+  scrollbar-color: #777 #333;
+}
+}
+
+/* SVG Trick: a prefix match works because only black and white are allowed */
+svg :is([stroke="black"], [stroke^="#000"]) {
+  stroke: var(--text-color);
+}
+svg :is([stroke="white"], [stroke^="#fff"]) {
+  stroke: var(--background-color);
+}
+svg :is([fill="black"], [fill^="#000"], :not([fill])) {
+  fill: var(--text-color);
+}
+svg :is([fill="white"], [fill^="#fff"]) {
+  fill: var(--background-color);
+}
+</style>
+
+</head>
+<body class="xml2rfc">
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">AI Network Privacy Control</td>
+<td class="right">November 2025</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Bisht</td>
+<td class="center">Expires 7 May 2026</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">AI Preferences</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-aipref-network-privacy-control-latest</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2025-11-03" class="published">3 November 2025</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Standards Track</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2026-05-07">7 May 2026</time></dd>
+<dt class="label-authors">Author:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">A. Bisht</div>
+<div class="org">Cisco</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">AI Preferences for Privacy-Preserving Network Traffic Analysis</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">This document defines a framework for expressing and enforcing preferences about how Artificial Intelligence (AI) agents collect, process, and analyze network traffic data for the purposes of detecting network anomalies, unfair usage patterns, and implementing intelligent network control. The framework enables network operators and users to specify granular preferences regarding what traffic characteristics may be exposed to AI systems while maintaining privacy guarantees and preventing sensitive information leakage.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+<p id="section-abstract-2">This work extends the AI Preferences vocabulary to the domain of network traffic analysis, providing mechanisms for reconciling competing privacy requirements with the operational need for intelligent network monitoring and control.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
+</section>
+<section class="note rfcEditorRemove" id="section-note.1">
+      <h2 id="name-about-this-document">
+<a href="#name-about-this-document" class="section-name selfRef">About This Document</a>
+      </h2>
+<p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">
+        The latest revision of this draft can be found at <span><a href="https://ietf-wg-aipref.github.io/">https://ietf-wg-aipref.github.io/</a></span>.
+        Status information for this document may be found at <span><a href="https://datatracker.ietf.org/doc/draft-aipref-network-privacy-control/">https://datatracker.ietf.org/doc/draft-aipref-network-privacy-control/</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+<p id="section-note.1-3">
+        Discussion of this document takes place on the
+        AI Preferences Working Group mailing list (<span><a href="mailto:ai-control@ietf.org">mailto:ai-control@ietf.org</a></span>),
+        which is archived at <span><a href="https://mailarchive.ietf.org/arch/browse/ai-control/">https://mailarchive.ietf.org/arch/browse/ai-control/</a></span>.
+        Subscribe at <span><a href="https://www.ietf.org/mailman/listinfo/ai-control/">https://www.ietf.org/mailman/listinfo/ai-control/</a></span>.<a href="#section-note.1-3" class="pilcrow">¶</a></p>
+<p id="section-note.1-4">Source for this draft and an issue tracker can be found at
+        <span><a href="https://github.com/ietf-wg-aipref">https://github.com/ietf-wg-aipref</a></span>.<a href="#section-note.1-4" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 7 May 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2025 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1"><a href="#section-1" class="auto internal xref">1</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="auto internal xref">1.1</a>.  <a href="#name-motivation" class="internal xref">Motivation</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2">
+                <p id="section-toc.1-1.1.2.2.1" class="keepWithNext"><a href="#section-1.2" class="auto internal xref">1.2</a>.  <a href="#name-scope" class="internal xref">Scope</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.3">
+                <p id="section-toc.1-1.1.2.3.1" class="keepWithNext"><a href="#section-1.3" class="auto internal xref">1.3</a>.  <a href="#name-requirements-language" class="internal xref">Requirements Language</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-problem-statement" class="internal xref">Problem Statement</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1">
+                <p id="section-toc.1-1.2.2.1.1"><a href="#section-2.1" class="auto internal xref">2.1</a>.  <a href="#name-current-challenges" class="internal xref">Current Challenges</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1.2.1">
+                    <p id="section-toc.1-1.2.2.1.2.1.1"><a href="#section-2.1.1" class="auto internal xref">2.1.1</a>.  <a href="#name-uncontrolled-ai-access-to-n" class="internal xref">Uncontrolled AI Access to Network Data</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1.2.2">
+                    <p id="section-toc.1-1.2.2.1.2.2.1"><a href="#section-2.1.2" class="auto internal xref">2.1.2</a>.  <a href="#name-lack-of-standardized-prefer" class="internal xref">Lack of Standardized Preference Expression</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1.2.3">
+                    <p id="section-toc.1-1.2.2.1.2.3.1"><a href="#section-2.1.3" class="auto internal xref">2.1.3</a>.  <a href="#name-privacy-vs-functionality-tr" class="internal xref">Privacy vs. Functionality Trade-offs</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.2">
+                <p id="section-toc.1-1.2.2.2.1"><a href="#section-2.2" class="auto internal xref">2.2</a>.  <a href="#name-use-cases" class="internal xref">Use Cases</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.2.2.1">
+                    <p id="section-toc.1-1.2.2.2.2.1.1"><a href="#section-2.2.1" class="auto internal xref">2.2.1</a>.  <a href="#name-use-case-1-detecting-unfair" class="internal xref">Use Case 1: Detecting Unfair Bandwidth Usage</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.2.2.2">
+                    <p id="section-toc.1-1.2.2.2.2.2.1"><a href="#section-2.2.2" class="auto internal xref">2.2.2</a>.  <a href="#name-use-case-2-ddos-detection-w" class="internal xref">Use Case 2: DDoS Detection Without Privacy Leakage</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.2.2.3">
+                    <p id="section-toc.1-1.2.2.2.2.3.1"><a href="#section-2.2.3" class="auto internal xref">2.2.3</a>.  <a href="#name-use-case-3-intelligent-traf" class="internal xref">Use Case 3: Intelligent Traffic Engineering</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.2.2.4">
+                    <p id="section-toc.1-1.2.2.2.2.4.1"><a href="#section-2.2.4" class="auto internal xref">2.2.4</a>.  <a href="#name-use-case-4-multi-tenant-net" class="internal xref">Use Case 4: Multi-Tenant Network Privacy</a></p>
+</li>
+                </ul>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-architecture" class="internal xref">Architecture</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
+                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-components" class="internal xref">Components</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1.2.1">
+                    <p id="section-toc.1-1.3.2.1.2.1.1"><a href="#section-3.1.1" class="auto internal xref">3.1.1</a>.  <a href="#name-preference-originators" class="internal xref">Preference Originators</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1.2.2">
+                    <p id="section-toc.1-1.3.2.1.2.2.1"><a href="#section-3.1.2" class="auto internal xref">3.1.2</a>.  <a href="#name-preference-attachers" class="internal xref">Preference Attachers</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1.2.3">
+                    <p id="section-toc.1-1.3.2.1.2.3.1"><a href="#section-3.1.3" class="auto internal xref">3.1.3</a>.  <a href="#name-ai-processing-agents" class="internal xref">AI Processing Agents</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1.2.4">
+                    <p id="section-toc.1-1.3.2.1.2.4.1"><a href="#section-3.1.4" class="auto internal xref">3.1.4</a>.  <a href="#name-preference-enforcement-poin" class="internal xref">Preference Enforcement Points</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-information-flow" class="internal xref">Information Flow</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-preference-vocabulary" class="internal xref">Preference Vocabulary</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-core-preference-categories" class="internal xref">Core Preference Categories</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.1">
+                    <p id="section-toc.1-1.4.2.1.2.1.1"><a href="#section-4.1.1" class="auto internal xref">4.1.1</a>.  <a href="#name-processing-scope-preference" class="internal xref">Processing Scope Preferences</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.2">
+                    <p id="section-toc.1-1.4.2.1.2.2.1"><a href="#section-4.1.2" class="auto internal xref">4.1.2</a>.  <a href="#name-identity-protection-prefere" class="internal xref">Identity Protection Preferences</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.3">
+                    <p id="section-toc.1-1.4.2.1.2.3.1"><a href="#section-4.1.3" class="auto internal xref">4.1.3</a>.  <a href="#name-temporal-preferences" class="internal xref">Temporal Preferences</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.4">
+                    <p id="section-toc.1-1.4.2.1.2.4.1"><a href="#section-4.1.4" class="auto internal xref">4.1.4</a>.  <a href="#name-feature-access-preferences" class="internal xref">Feature Access Preferences</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.5">
+                    <p id="section-toc.1-1.4.2.1.2.5.1"><a href="#section-4.1.5" class="auto internal xref">4.1.5</a>.  <a href="#name-processing-location-prefere" class="internal xref">Processing Location Preferences</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.6">
+                    <p id="section-toc.1-1.4.2.1.2.6.1"><a href="#section-4.1.6" class="auto internal xref">4.1.6</a>.  <a href="#name-audit-and-transparency-pref" class="internal xref">Audit and Transparency Preferences</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-feature-taxonomy" class="internal xref">Feature Taxonomy</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.1">
+                    <p id="section-toc.1-1.4.2.2.2.1.1"><a href="#section-4.2.1" class="auto internal xref">4.2.1</a>.  <a href="#name-layer-3-4-features" class="internal xref">Layer 3/4 Features</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.2">
+                    <p id="section-toc.1-1.4.2.2.2.2.1"><a href="#section-4.2.2" class="auto internal xref">4.2.2</a>.  <a href="#name-aggregate-features" class="internal xref">Aggregate Features</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.3">
+                    <p id="section-toc.1-1.4.2.2.2.3.1"><a href="#section-4.2.3" class="auto internal xref">4.2.3</a>.  <a href="#name-temporal-features" class="internal xref">Temporal Features</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.4">
+                    <p id="section-toc.1-1.4.2.2.2.4.1"><a href="#section-4.2.4" class="auto internal xref">4.2.4</a>.  <a href="#name-statistical-features" class="internal xref">Statistical Features</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2.2.5">
+                    <p id="section-toc.1-1.4.2.2.2.5.1"><a href="#section-4.2.5" class="auto internal xref">4.2.5</a>.  <a href="#name-derived-features" class="internal xref">Derived Features</a></p>
+</li>
+                </ul>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-preference-attachment-mecha" class="internal xref">Preference Attachment Mechanisms</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-in-band-signaling" class="internal xref">In-Band Signaling</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.1">
+                    <p id="section-toc.1-1.5.2.1.2.1.1"><a href="#section-5.1.1" class="auto internal xref">5.1.1</a>.  <a href="#name-ipv6-destination-options-he" class="internal xref">IPv6 Destination Options Header</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1.2.2">
+                    <p id="section-toc.1-1.5.2.1.2.2.1"><a href="#section-5.1.2" class="auto internal xref">5.1.2</a>.  <a href="#name-flow-metadata-export" class="internal xref">Flow Metadata Export</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
+                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-out-of-band-mechanisms" class="internal xref">Out-of-Band Mechanisms</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2.2.1">
+                    <p id="section-toc.1-1.5.2.2.2.1.1"><a href="#section-5.2.1" class="auto internal xref">5.2.1</a>.  <a href="#name-well-known-uri-for-network-" class="internal xref">Well-Known URI for Network Preferences</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2.2.2">
+                    <p id="section-toc.1-1.5.2.2.2.2.1"><a href="#section-5.2.2" class="auto internal xref">5.2.2</a>.  <a href="#name-dns-txt-records" class="internal xref">DNS TXT Records</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2.2.3">
+                    <p id="section-toc.1-1.5.2.2.2.3.1"><a href="#section-5.2.3" class="auto internal xref">5.2.3</a>.  <a href="#name-yang-data-models" class="internal xref">YANG Data Models</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3">
+                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-preference-discovery" class="internal xref">Preference Discovery</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-preference-reconciliation" class="internal xref">Preference Reconciliation</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
+                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-multiple-preference-sources" class="internal xref">Multiple Preference Sources</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1.2.1">
+                    <p id="section-toc.1-1.6.2.1.2.1.1"><a href="#section-6.1.1" class="auto internal xref">6.1.1</a>.  <a href="#name-strictest-wins-policy" class="internal xref">Strictest-Wins Policy</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1.2.2">
+                    <p id="section-toc.1-1.6.2.1.2.2.1"><a href="#section-6.1.2" class="auto internal xref">6.1.2</a>.  <a href="#name-intersection-for-allowed-fe" class="internal xref">Intersection for Allowed Features</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1.2.3">
+                    <p id="section-toc.1-1.6.2.1.2.3.1"><a href="#section-6.1.3" class="auto internal xref">6.1.3</a>.  <a href="#name-union-for-forbidden-feature" class="internal xref">Union for Forbidden Features</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1.2.4">
+                    <p id="section-toc.1-1.6.2.1.2.4.1"><a href="#section-6.1.4" class="auto internal xref">6.1.4</a>.  <a href="#name-purpose-intersection" class="internal xref">Purpose Intersection</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
+                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-conflict-resolution-algorit" class="internal xref">Conflict Resolution Algorithm</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-privacy-preserving-techniqu" class="internal xref">Privacy-Preserving Techniques</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
+                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-data-minimization" class="internal xref">Data Minimization</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1.2.1">
+                    <p id="section-toc.1-1.7.2.1.2.1.1"><a href="#section-7.1.1" class="auto internal xref">7.1.1</a>.  <a href="#name-k-anonymity-for-flow-record" class="internal xref">K-Anonymity for Flow Records</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1.2.2">
+                    <p id="section-toc.1-1.7.2.1.2.2.1"><a href="#section-7.1.2" class="auto internal xref">7.1.2</a>.  <a href="#name-differential-privacy-for-st" class="internal xref">Differential Privacy for Statistics</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1.2.3">
+                    <p id="section-toc.1-1.7.2.1.2.3.1"><a href="#section-7.1.3" class="auto internal xref">7.1.3</a>.  <a href="#name-temporal-aggregation" class="internal xref">Temporal Aggregation</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1.2.4">
+                    <p id="section-toc.1-1.7.2.1.2.4.1"><a href="#section-7.1.4" class="auto internal xref">7.1.4</a>.  <a href="#name-feature-suppression" class="internal xref">Feature Suppression</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
+                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-pseudonymization-and-anonym" class="internal xref">Pseudonymization and Anonymization</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2.2.1">
+                    <p id="section-toc.1-1.7.2.2.2.1.1"><a href="#section-7.2.1" class="auto internal xref">7.2.1</a>.  <a href="#name-consistent-pseudonyms" class="internal xref">Consistent Pseudonyms</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2.2.2">
+                    <p id="section-toc.1-1.7.2.2.2.2.1"><a href="#section-7.2.2" class="auto internal xref">7.2.2</a>.  <a href="#name-ip-address-anonymization" class="internal xref">IP Address Anonymization</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.3">
+                <p id="section-toc.1-1.7.2.3.1"><a href="#section-7.3" class="auto internal xref">7.3</a>.  <a href="#name-secure-multi-party-computat" class="internal xref">Secure Multi-Party Computation</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1">
+                <p id="section-toc.1-1.8.2.1.1"><a href="#section-8.1" class="auto internal xref">8.1</a>.  <a href="#name-preference-integrity" class="internal xref">Preference Integrity</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.2">
+                <p id="section-toc.1-1.8.2.2.1"><a href="#section-8.2" class="auto internal xref">8.2</a>.  <a href="#name-preference-confidentiality" class="internal xref">Preference Confidentiality</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.3">
+                <p id="section-toc.1-1.8.2.3.1"><a href="#section-8.3" class="auto internal xref">8.3</a>.  <a href="#name-enforcement-limitations" class="internal xref">Enforcement Limitations</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.4">
+                <p id="section-toc.1-1.8.2.4.1"><a href="#section-8.4" class="auto internal xref">8.4</a>.  <a href="#name-privacy-attacks" class="internal xref">Privacy Attacks</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.4.2.1">
+                    <p id="section-toc.1-1.8.2.4.2.1.1"><a href="#section-8.4.1" class="auto internal xref">8.4.1</a>.  <a href="#name-inference-attacks" class="internal xref">Inference Attacks</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.4.2.2">
+                    <p id="section-toc.1-1.8.2.4.2.2.1"><a href="#section-8.4.2" class="auto internal xref">8.4.2</a>.  <a href="#name-timing-attacks" class="internal xref">Timing Attacks</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.4.2.3">
+                    <p id="section-toc.1-1.8.2.4.2.3.1"><a href="#section-8.4.3" class="auto internal xref">8.4.3</a>.  <a href="#name-fingerprinting" class="internal xref">Fingerprinting</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.5">
+                <p id="section-toc.1-1.8.2.5.1"><a href="#section-8.5" class="auto internal xref">8.5</a>.  <a href="#name-denial-of-service" class="internal xref">Denial of Service</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-iana-considerations" class="internal xref">IANA Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.1">
+                <p id="section-toc.1-1.9.2.1.1"><a href="#section-9.1" class="auto internal xref">9.1</a>.  <a href="#name-ipv6-destination-options" class="internal xref">IPv6 Destination Options</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.2">
+                <p id="section-toc.1-1.9.2.2.1"><a href="#section-9.2" class="auto internal xref">9.2</a>.  <a href="#name-well-known-uri" class="internal xref">Well-Known URI</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.3">
+                <p id="section-toc.1-1.9.2.3.1"><a href="#section-9.3" class="auto internal xref">9.3</a>.  <a href="#name-ipfix-information-elements" class="internal xref">IPFIX Information Elements</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.4">
+                <p id="section-toc.1-1.9.2.4.1"><a href="#section-9.4" class="auto internal xref">9.4</a>.  <a href="#name-ai-preference-parameters-re" class="internal xref">AI Preference Parameters Registry</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9.2.5">
+                <p id="section-toc.1-1.9.2.5.1"><a href="#section-9.5" class="auto internal xref">9.5</a>.  <a href="#name-network-traffic-feature-reg" class="internal xref">Network Traffic Feature Registry</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-implementation-consideratio" class="internal xref">Implementation Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.1">
+                <p id="section-toc.1-1.10.2.1.1"><a href="#section-10.1" class="auto internal xref">10.1</a>.  <a href="#name-ai-agent-implementation" class="internal xref">AI Agent Implementation</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.2">
+                <p id="section-toc.1-1.10.2.2.1"><a href="#section-10.2" class="auto internal xref">10.2</a>.  <a href="#name-network-equipment-implement" class="internal xref">Network Equipment Implementation</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.3">
+                <p id="section-toc.1-1.10.2.3.1"><a href="#section-10.3" class="auto internal xref">10.3</a>.  <a href="#name-deployment-strategies" class="internal xref">Deployment Strategies</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.3.2.1">
+                    <p id="section-toc.1-1.10.2.3.2.1.1"><a href="#section-10.3.1" class="auto internal xref">10.3.1</a>.  <a href="#name-incremental-deployment" class="internal xref">Incremental Deployment</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10.2.3.2.2">
+                    <p id="section-toc.1-1.10.2.3.2.2.1"><a href="#section-10.3.2" class="auto internal xref">10.3.2</a>.  <a href="#name-backwards-compatibility" class="internal xref">Backwards Compatibility</a></p>
+</li>
+                </ul>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
+            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-examples" class="internal xref">Examples</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.1">
+                <p id="section-toc.1-1.11.2.1.1"><a href="#section-11.1" class="auto internal xref">11.1</a>.  <a href="#name-example-1-isp-fair-usage-mo" class="internal xref">Example 1: ISP Fair Usage Monitoring</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.2">
+                <p id="section-toc.1-1.11.2.2.1"><a href="#section-11.2" class="auto internal xref">11.2</a>.  <a href="#name-example-2-ddos-detection-in" class="internal xref">Example 2: DDoS Detection in Multi-Tenant Data Center</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11.2.3">
+                <p id="section-toc.1-1.11.2.3.1"><a href="#section-11.3" class="auto internal xref">11.3</a>.  <a href="#name-example-3-enterprise-networ" class="internal xref">Example 3: Enterprise Network with Regulatory Requirements</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
+            <p id="section-toc.1-1.12.1"><a href="#section-12" class="auto internal xref">12</a>. <a href="#name-operational-considerations" class="internal xref">Operational Considerations</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.1">
+                <p id="section-toc.1-1.12.2.1.1"><a href="#section-12.1" class="auto internal xref">12.1</a>.  <a href="#name-monitoring-and-compliance" class="internal xref">Monitoring and Compliance</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.2">
+                <p id="section-toc.1-1.12.2.2.1"><a href="#section-12.2" class="auto internal xref">12.2</a>.  <a href="#name-performance-impact" class="internal xref">Performance Impact</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12.2.3">
+                <p id="section-toc.1-1.12.2.3.1"><a href="#section-12.3" class="auto internal xref">12.3</a>.  <a href="#name-preference-management" class="internal xref">Preference Management</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
+            <p id="section-toc.1-1.13.1"><a href="#section-13" class="auto internal xref">13</a>. <a href="#name-references" class="internal xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.1">
+                <p id="section-toc.1-1.13.2.1.1"><a href="#section-13.1" class="auto internal xref">13.1</a>.  <a href="#name-normative-references" class="internal xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13.2.2">
+                <p id="section-toc.1-1.13.2.2.1"><a href="#section-13.2" class="auto internal xref">13.2</a>.  <a href="#name-informative-references" class="internal xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
+            <p id="section-toc.1-1.14.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15">
+            <p id="section-toc.1-1.15.1"><a href="#appendix-B" class="auto internal xref">Appendix B</a>.  <a href="#name-appendix-a-privacy-preservi" class="internal xref">Appendix A: Privacy-Preserving Traffic Analysis Techniques</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15.2.1">
+                <p id="section-toc.1-1.15.2.1.1"><a href="#appendix-B.1" class="auto internal xref">B.1</a>.  <a href="#name-a1-differential-privacy-mec" class="internal xref">A.1 Differential Privacy Mechanisms</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15.2.2">
+                <p id="section-toc.1-1.15.2.2.1"><a href="#appendix-B.2" class="auto internal xref">B.2</a>.  <a href="#name-a2-k-anonymity-generalizati" class="internal xref">A.2 K-Anonymity Generalization</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15.2.3">
+                <p id="section-toc.1-1.15.2.3.1"><a href="#appendix-B.3" class="auto internal xref">B.3</a>.  <a href="#name-a3-secure-aggregation-proto" class="internal xref">A.3 Secure Aggregation Protocols</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16">
+            <p id="section-toc.1-1.16.1"><a href="#appendix-C" class="auto internal xref">Appendix C</a>.  <a href="#name-appendix-b-example-preferen" class="internal xref">Appendix B: Example Preference Documents</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16.2.1">
+                <p id="section-toc.1-1.16.2.1.1"><a href="#appendix-C.1" class="auto internal xref">C.1</a>.  <a href="#name-b1-isp-fair-usage-policy" class="internal xref">B.1 ISP Fair Usage Policy</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16.2.2">
+                <p id="section-toc.1-1.16.2.2.1"><a href="#appendix-C.2" class="auto internal xref">C.2</a>.  <a href="#name-b2-enterprise-security-moni" class="internal xref">B.2 Enterprise Security Monitoring</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.16.2.3">
+                <p id="section-toc.1-1.16.2.3.1"><a href="#appendix-C.3" class="auto internal xref">C.3</a>.  <a href="#name-b3-research-network-with-co" class="internal xref">B.3 Research Network with Consent</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.17">
+            <p id="section-toc.1-1.17.1"><a href="#appendix-D" class="auto internal xref">Appendix D</a>.  <a href="#name-appendix-c-ai-agent-complia" class="internal xref">Appendix C: AI Agent Compliance Checklist</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.18">
+            <p id="section-toc.1-1.18.1"><a href="#appendix-E" class="auto internal xref"></a><a href="#name-authors-address" class="internal xref">Author's Address</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="introduction">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<div id="motivation">
+<section id="section-1.1">
+        <h3 id="name-motivation">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-motivation" class="section-name selfRef">Motivation</a>
+        </h3>
+<p id="section-1.1-1">The increasing deployment of AI-based systems for network monitoring, traffic analysis, and intelligent control presents significant opportunities for improved network performance, security, and resource allocation. However, these systems also raise substantial privacy concerns when they process traffic metadata and patterns that may reveal sensitive information about users, organizations, and network behavior.<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+<p id="section-1.1-2">Network operators need to detect and respond to:
+- Unfair usage patterns and bandwidth abuse
+- Network anomalies and potential security threats
+- Performance degradation and congestion
+- Protocol violations and malicious traffic<a href="#section-1.1-2" class="pilcrow">¶</a></p>
+<p id="section-1.1-3">Simultaneously, users and organizations require:
+- Privacy protection for their traffic patterns
+- Control over what network characteristics are exposed to AI systems
+- Guarantees about data retention and processing
+- Transparency about AI-based monitoring activities<a href="#section-1.1-3" class="pilcrow">¶</a></p>
+<p id="section-1.1-4">This document addresses the challenge of enabling AI-driven network intelligence while respecting privacy preferences through standardized preference expression and enforcement mechanisms.<a href="#section-1.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="scope">
+<section id="section-1.2">
+        <h3 id="name-scope">
+<a href="#section-1.2" class="section-number selfRef">1.2. </a><a href="#name-scope" class="section-name selfRef">Scope</a>
+        </h3>
+<p id="section-1.2-1">This document defines:<a href="#section-1.2-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-1.2-2">
+<li id="section-1.2-2.1">
+            <p id="section-1.2-2.1.1">A vocabulary for expressing preferences about AI processing of network traffic data<a href="#section-1.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-1.2-2.2">
+            <p id="section-1.2-2.2.1">Mechanisms for attaching these preferences to network flows and traffic metadata<a href="#section-1.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-1.2-2.3">
+            <p id="section-1.2-2.3.1">Methods for AI agents to discover and respect these preferences<a href="#section-1.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-1.2-2.4">
+            <p id="section-1.2-2.4.1">A framework for reconciling conflicting preferences from multiple stakeholders<a href="#section-1.2-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-1.2-2.5">
+            <p id="section-1.2-2.5.1">Privacy-preserving techniques for network traffic analysis<a href="#section-1.2-2.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+<p id="section-1.2-3">This document does NOT address:<a href="#section-1.2-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-1.2-4.1">
+            <p id="section-1.2-4.1.1">Technical enforcement mechanisms for preventing preference violations<a href="#section-1.2-4.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.2-4.2">
+            <p id="section-1.2-4.2.1">Authentication and authorization of AI agents or monitoring systems<a href="#section-1.2-4.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.2-4.3">
+            <p id="section-1.2-4.3.1">Specific AI/ML algorithms for traffic analysis<a href="#section-1.2-4.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.2-4.4">
+            <p id="section-1.2-4.4.1">Network-layer security protocols<a href="#section-1.2-4.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-1.2-4.5">
+            <p id="section-1.2-4.5.1">Legal or regulatory compliance requirements<a href="#section-1.2-4.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="requirements-language">
+<section id="section-1.3">
+        <h3 id="name-requirements-language">
+<a href="#section-1.3" class="section-number selfRef">1.3. </a><a href="#name-requirements-language" class="section-name selfRef">Requirements Language</a>
+        </h3>
+<p id="section-1.3-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
+"<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
+described in BCP 14 <span>[<a href="#RFC2119" class="cite xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="cite xref">RFC8174</a>]</span> when, and only when, they
+appear in all capitals, as shown here.<a href="#section-1.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="problem-statement">
+<section id="section-2">
+      <h2 id="name-problem-statement">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-problem-statement" class="section-name selfRef">Problem Statement</a>
+      </h2>
+<div id="current-challenges">
+<section id="section-2.1">
+        <h3 id="name-current-challenges">
+<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-current-challenges" class="section-name selfRef">Current Challenges</a>
+        </h3>
+<div id="uncontrolled-ai-access-to-network-data">
+<section id="section-2.1.1">
+          <h4 id="name-uncontrolled-ai-access-to-n">
+<a href="#section-2.1.1" class="section-number selfRef">2.1.1. </a><a href="#name-uncontrolled-ai-access-to-n" class="section-name selfRef">Uncontrolled AI Access to Network Data</a>
+          </h4>
+<p id="section-2.1.1-1">Current network monitoring systems often have unrestricted access to traffic metadata including:
+- Source and destination IP addresses and ports
+- Packet timing and sizes
+- Protocol types and patterns
+- Flow durations and volumes
+- Application layer indicators<a href="#section-2.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-2.1.1-2">AI systems processing this data can infer sensitive information such as:
+- User behavior patterns and activities
+- Organizational structure and communication patterns
+- Geographic locations and movements
+- Application usage and content types
+- Business relationships and partnerships<a href="#section-2.1.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="lack-of-standardized-preference-expression">
+<section id="section-2.1.2">
+          <h4 id="name-lack-of-standardized-prefer">
+<a href="#section-2.1.2" class="section-number selfRef">2.1.2. </a><a href="#name-lack-of-standardized-prefer" class="section-name selfRef">Lack of Standardized Preference Expression</a>
+          </h4>
+<p id="section-2.1.2-1">There is no standardized mechanism for:
+- Network administrators to express what data AI systems may access
+- Users to specify privacy requirements for their traffic
+- Organizations to communicate data processing policies
+- AI agents to discover and understand these preferences
+- Reconciling preferences across different stakeholders<a href="#section-2.1.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="privacy-vs-functionality-trade-offs">
+<section id="section-2.1.3">
+          <h4 id="name-privacy-vs-functionality-tr">
+<a href="#section-2.1.3" class="section-number selfRef">2.1.3. </a><a href="#name-privacy-vs-functionality-tr" class="section-name selfRef">Privacy vs. Functionality Trade-offs</a>
+          </h4>
+<p id="section-2.1.3-1">Network operators face difficult choices between:
+- Detecting unfair usage vs. respecting user privacy
+- Implementing intelligent QoS vs. exposing traffic patterns
+- Identifying security threats vs. revealing network topology
+- Optimizing performance vs. protecting business confidentiality<a href="#section-2.1.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="use-cases">
+<section id="section-2.2">
+        <h3 id="name-use-cases">
+<a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-use-cases" class="section-name selfRef">Use Cases</a>
+        </h3>
+<div id="use-case-1-detecting-unfair-bandwidth-usage">
+<section id="section-2.2.1">
+          <h4 id="name-use-case-1-detecting-unfair">
+<a href="#section-2.2.1" class="section-number selfRef">2.2.1. </a><a href="#name-use-case-1-detecting-unfair" class="section-name selfRef">Use Case 1: Detecting Unfair Bandwidth Usage</a>
+          </h4>
+<p id="section-2.2.1-1">A network operator wants to use AI to detect users consuming disproportionate bandwidth or violating fair usage policies, but must:
+- Not expose individual user identities to the AI system
+- Not reveal specific applications or content being accessed
+- Only provide aggregate traffic statistics at appropriate granularity
+- Limit retention of detailed flow records<a href="#section-2.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-2.2.1-2"><strong>Preference Expression Needed:</strong>
+            <code>
+AI-Processing-Scope: aggregate-flows
+AI-Temporal-Granularity: 5min-buckets
+AI-Identity-Level: anonymized
+AI-Retention-Period: 24h
+AI-Allowed-Features: volume, packet-rate, flow-count
+AI-Forbidden-Features: payload, endpoints, timing-precision
+</code><a href="#section-2.2.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="use-case-2-ddos-detection-without-privacy-leakage">
+<section id="section-2.2.2">
+          <h4 id="name-use-case-2-ddos-detection-w">
+<a href="#section-2.2.2" class="section-number selfRef">2.2.2. </a><a href="#name-use-case-2-ddos-detection-w" class="section-name selfRef">Use Case 2: DDoS Detection Without Privacy Leakage</a>
+          </h4>
+<p id="section-2.2.2-1">A security AI agent monitors for distributed denial of service attacks while preserving privacy:
+- Analyzes traffic patterns for anomalous behavior
+- Does not track individual legitimate user sessions
+- Aggregates statistics to prevent identification
+- Triggers alerts without exposing traffic content<a href="#section-2.2.2-1" class="pilcrow">¶</a></p>
+<p id="section-2.2.2-2"><strong>Preference Expression Needed:</strong>
+            <code>
+AI-Processing-Purpose: ddos-detection
+AI-Identity-Level: pseudonymized
+AI-Aggregation-Level: per-prefix-24
+AI-Feature-Access: packet-rates, syn-ratios, geographic-distribution
+AI-Alert-Detail-Level: aggregate-only
+AI-Audit-Required: true
+</code><a href="#section-2.2.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="use-case-3-intelligent-traffic-engineering">
+<section id="section-2.2.3">
+          <h4 id="name-use-case-3-intelligent-traf">
+<a href="#section-2.2.3" class="section-number selfRef">2.2.3. </a><a href="#name-use-case-3-intelligent-traf" class="section-name selfRef">Use Case 3: Intelligent Traffic Engineering</a>
+          </h4>
+<p id="section-2.2.3-1">An AI system optimizes routing and load balancing while respecting organizational privacy:
+- Analyzes traffic matrices and flow patterns
+- Does not expose individual customer traffic
+- Aggregates flows by destination prefix
+- Provides recommendations without accessing sensitive attributes<a href="#section-2.2.3-1" class="pilcrow">¶</a></p>
+<p id="section-2.2.3-2"><strong>Preference Expression Needed:</strong>
+            <code>
+AI-Processing-Purpose: traffic-engineering
+AI-Flow-Granularity: per-prefix-aggregate
+AI-Temporal-Resolution: 1h
+AI-Exposed-Metrics: volume, destination-prefix, qos-class
+AI-Protected-Metrics: source-identity, application-type, payload-size-distribution
+AI-Processing-Location: on-premises
+</code><a href="#section-2.2.3-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="use-case-4-multi-tenant-network-privacy">
+<section id="section-2.2.4">
+          <h4 id="name-use-case-4-multi-tenant-net">
+<a href="#section-2.2.4" class="section-number selfRef">2.2.4. </a><a href="#name-use-case-4-multi-tenant-net" class="section-name selfRef">Use Case 4: Multi-Tenant Network Privacy</a>
+          </h4>
+<p id="section-2.2.4-1">In a multi-tenant environment, different organizations have varying privacy requirements:
+- Tenant A allows detailed traffic analysis for security
+- Tenant B requires minimal AI processing with strong anonymization
+- Tenant C prohibits any AI processing of their traffic
+- The system must reconcile and enforce these preferences<a href="#section-2.2.4-1" class="pilcrow">¶</a></p>
+<p id="section-2.2.4-2"><strong>Preference Reconciliation Needed:</strong>
+            <code>
+Tenant-A: AI-Processing: permitted, AI-Detail-Level: high
+Tenant-B: AI-Processing: limited, AI-Anonymization: required
+Tenant-C: AI-Processing: prohibited
+Resolution: per-tenant enforcement with strictest-wins policy
+</code><a href="#section-2.2.4-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="architecture">
+<section id="section-3">
+      <h2 id="name-architecture">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-architecture" class="section-name selfRef">Architecture</a>
+      </h2>
+<div id="components">
+<section id="section-3.1">
+        <h3 id="name-components">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-components" class="section-name selfRef">Components</a>
+        </h3>
+<div id="preference-originators">
+<section id="section-3.1.1">
+          <h4 id="name-preference-originators">
+<a href="#section-3.1.1" class="section-number selfRef">3.1.1. </a><a href="#name-preference-originators" class="section-name selfRef">Preference Originators</a>
+          </h4>
+<p id="section-3.1.1-1">Entities that express preferences about AI processing:
+- Network administrators and operators
+- End users and subscriber organizations
+- Equipment vendors and service providers
+- Regulatory authorities and policies<a href="#section-3.1.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="preference-attachers">
+<section id="section-3.1.2">
+          <h4 id="name-preference-attachers">
+<a href="#section-3.1.2" class="section-number selfRef">3.1.2. </a><a href="#name-preference-attachers" class="section-name selfRef">Preference Attachers</a>
+          </h4>
+<p id="section-3.1.2-1">Mechanisms for associating preferences with network traffic:
+- Flow metadata tags and attributes
+- Router/switch configuration directives
+- Protocol signaling (e.g., IP options, extension headers)
+- Out-of-band policy distribution systems<a href="#section-3.1.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="ai-processing-agents">
+<section id="section-3.1.3">
+          <h4 id="name-ai-processing-agents">
+<a href="#section-3.1.3" class="section-number selfRef">3.1.3. </a><a href="#name-ai-processing-agents" class="section-name selfRef">AI Processing Agents</a>
+          </h4>
+<p id="section-3.1.3-1">Systems that consume network data and respect preferences:
+- Traffic analysis and monitoring systems
+- Anomaly detection engines
+- Intelligent control plane systems
+- Network optimization algorithms<a href="#section-3.1.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="preference-enforcement-points">
+<section id="section-3.1.4">
+          <h4 id="name-preference-enforcement-poin">
+<a href="#section-3.1.4" class="section-number selfRef">3.1.4. </a><a href="#name-preference-enforcement-poin" class="section-name selfRef">Preference Enforcement Points</a>
+          </h4>
+<p id="section-3.1.4-1">Components that enforce preference compliance:
+- Flow collectors with preference-aware filtering
+- AI agent authorization and access control systems
+- Audit and compliance monitoring systems
+- Privacy-preserving data transformation proxies<a href="#section-3.1.4-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="information-flow">
+<section id="section-3.2">
+        <h3 id="name-information-flow">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-information-flow" class="section-name selfRef">Information Flow</a>
+        </h3>
+<p id="section-3.2-1"><code>
+┌─────────────────┐
+│ Preference      │
+│ Originators     │
+└────────┬────────┘
+         │ Express preferences
+         ▼
+┌─────────────────────────────────────────┐
+│ Preference Storage &amp; Distribution       │
+│ - Policy repositories                   │
+│ - Configuration management              │
+│ - Protocol signaling                    │
+└────────┬────────────────────────────────┘
+         │ Attach/signal preferences
+         ▼
+┌─────────────────────────────────────────┐
+│ Network Traffic Flows                   │
+│ - Packet streams                        │
+│ - Flow records                          │
+│ - Metadata                              │
+└────────┬────────────────────────────────┘
+         │
+         ▼
+┌─────────────────────────────────────────┐
+│ Preference Enforcement Points           │
+│ - Filter/transform based on preferences │
+│ - Apply privacy-preserving techniques   │
+│ - Audit access                          │
+└────────┬────────────────────────────────┘
+         │ Preference-filtered data
+         ▼
+┌─────────────────────────────────────────┐
+│ AI Processing Agents                    │
+│ - Respect preferences                   │
+│ - Process within constraints            │
+│ - Report compliance                     │
+└─────────────────────────────────────────┘
+</code><a href="#section-3.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="preference-vocabulary">
+<section id="section-4">
+      <h2 id="name-preference-vocabulary">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-preference-vocabulary" class="section-name selfRef">Preference Vocabulary</a>
+      </h2>
+<div id="core-preference-categories">
+<section id="section-4.1">
+        <h3 id="name-core-preference-categories">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-core-preference-categories" class="section-name selfRef">Core Preference Categories</a>
+        </h3>
+<div id="processing-scope-preferences">
+<section id="section-4.1.1">
+          <h4 id="name-processing-scope-preference">
+<a href="#section-4.1.1" class="section-number selfRef">4.1.1. </a><a href="#name-processing-scope-preference" class="section-name selfRef">Processing Scope Preferences</a>
+          </h4>
+<p id="section-4.1.1-1">Define what aspects of network traffic AI agents may access:<a href="#section-4.1.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.1-2.1">
+              <p id="section-4.1.1-2.1.1"><strong>AI-Processing-Scope</strong>: Controls the level of traffic data access<a href="#section-4.1.1-2.1.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.1-2.1.2.1">
+                  <p id="section-4.1.1-2.1.2.1.1">Values: <code>none</code>, <code>metadata-only</code>, <code>aggregate-flows</code>, <code>individual-flows</code>, <code>full-access</code><a href="#section-4.1.1-2.1.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+            <li class="normal" id="section-4.1.1-2.2">
+              <p id="section-4.1.1-2.2.1"><strong>AI-Processing-Purpose</strong>: Restricts processing to specific purposes<a href="#section-4.1.1-2.2.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.1-2.2.2.1">
+                  <p id="section-4.1.1-2.2.2.1.1">Values: <code>leak-detection</code>, <code>ddos-protection</code>, <code>traffic-engineering</code>, <code>qos-optimization</code>, <code>security-monitoring</code>, <code>performance-analysis</code><a href="#section-4.1.1-2.2.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+          </ul>
+</section>
+</div>
+<div id="identity-protection-preferences">
+<section id="section-4.1.2">
+          <h4 id="name-identity-protection-prefere">
+<a href="#section-4.1.2" class="section-number selfRef">4.1.2. </a><a href="#name-identity-protection-prefere" class="section-name selfRef">Identity Protection Preferences</a>
+          </h4>
+<p id="section-4.1.2-1">Control how identity information is handled:<a href="#section-4.1.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.2-2.1">
+              <p id="section-4.1.2-2.1.1"><strong>AI-Identity-Level</strong>: Specifies identity exposure requirements<a href="#section-4.1.2-2.1.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.2-2.1.2.1">
+                  <p id="section-4.1.2-2.1.2.1.1">Values: <code>identified</code>, <code>pseudonymized</code>, <code>anonymized</code>, <code>aggregated</code>, <code>no-identity</code><a href="#section-4.1.2-2.1.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+            <li class="normal" id="section-4.1.2-2.2">
+              <p id="section-4.1.2-2.2.1"><strong>AI-Identity-Scope</strong>: Defines what constitutes identity in context<a href="#section-4.1.2-2.2.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.2-2.2.2.1">
+                  <p id="section-4.1.2-2.2.2.1.1">Values: <code>ip-address</code>, <code>user-id</code>, <code>device-id</code>, <code>session-id</code>, <code>flow-id</code><a href="#section-4.1.2-2.2.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+          </ul>
+</section>
+</div>
+<div id="temporal-preferences">
+<section id="section-4.1.3">
+          <h4 id="name-temporal-preferences">
+<a href="#section-4.1.3" class="section-number selfRef">4.1.3. </a><a href="#name-temporal-preferences" class="section-name selfRef">Temporal Preferences</a>
+          </h4>
+<p id="section-4.1.3-1">Control time-based aspects of data processing:<a href="#section-4.1.3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.3-2.1">
+              <p id="section-4.1.3-2.1.1"><strong>AI-Temporal-Granularity</strong>: Minimum time aggregation window<a href="#section-4.1.3-2.1.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.3-2.1.2.1">
+                  <p id="section-4.1.3-2.1.2.1.1">Values: time duration (e.g., <code>1min</code>, <code>5min</code>, <code>1h</code>, <code>1d</code>)<a href="#section-4.1.3-2.1.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+            <li class="normal" id="section-4.1.3-2.2">
+              <p id="section-4.1.3-2.2.1"><strong>AI-Retention-Period</strong>: Maximum data retention duration<a href="#section-4.1.3-2.2.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.3-2.2.2.1">
+                  <p id="section-4.1.3-2.2.2.1.1">Values: time duration (e.g., <code>1h</code>, <code>24h</code>, <code>7d</code>, <code>30d</code>, <code>none</code>)<a href="#section-4.1.3-2.2.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+            <li class="normal" id="section-4.1.3-2.3">
+              <p id="section-4.1.3-2.3.1"><strong>AI-Retention-Detail</strong>: Specifies detail level over time<a href="#section-4.1.3-2.3.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.3-2.3.2.1">
+                  <p id="section-4.1.3-2.3.2.1.1">Values: <code>full:1h,aggregate:24h,summary:7d</code> (multi-tier retention)<a href="#section-4.1.3-2.3.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+          </ul>
+</section>
+</div>
+<div id="feature-access-preferences">
+<section id="section-4.1.4">
+          <h4 id="name-feature-access-preferences">
+<a href="#section-4.1.4" class="section-number selfRef">4.1.4. </a><a href="#name-feature-access-preferences" class="section-name selfRef">Feature Access Preferences</a>
+          </h4>
+<p id="section-4.1.4-1">Control what traffic characteristics may be processed:<a href="#section-4.1.4-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.4-2.1">
+              <p id="section-4.1.4-2.1.1"><strong>AI-Allowed-Features</strong>: Explicitly permitted traffic features<a href="#section-4.1.4-2.1.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.4-2.1.2.1">
+                  <p id="section-4.1.4-2.1.2.1.1">Values: comma-separated list from feature taxonomy<a href="#section-4.1.4-2.1.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+            <li class="normal" id="section-4.1.4-2.2">
+              <p id="section-4.1.4-2.2.1"><strong>AI-Forbidden-Features</strong>: Explicitly prohibited traffic features<a href="#section-4.1.4-2.2.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.4-2.2.2.1">
+                  <p id="section-4.1.4-2.2.2.1.1">Values: comma-separated list from feature taxonomy<a href="#section-4.1.4-2.2.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+            <li class="normal" id="section-4.1.4-2.3">
+              <p id="section-4.1.4-2.3.1"><strong>AI-Feature-Aggregation</strong>: Required aggregation for features<a href="#section-4.1.4-2.3.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.4-2.3.2.1">
+                  <p id="section-4.1.4-2.3.2.1.1">Values: <code>none</code>, <code>statistical-only</code>, <code>histogram</code>, <code>quantiles</code><a href="#section-4.1.4-2.3.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+          </ul>
+</section>
+</div>
+<div id="processing-location-preferences">
+<section id="section-4.1.5">
+          <h4 id="name-processing-location-prefere">
+<a href="#section-4.1.5" class="section-number selfRef">4.1.5. </a><a href="#name-processing-location-prefere" class="section-name selfRef">Processing Location Preferences</a>
+          </h4>
+<p id="section-4.1.5-1">Control where AI processing occurs:<a href="#section-4.1.5-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.5-2.1">
+              <p id="section-4.1.5-2.1.1"><strong>AI-Processing-Location</strong>: Required processing location<a href="#section-4.1.5-2.1.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.5-2.1.2.1">
+                  <p id="section-4.1.5-2.1.2.1.1">Values: <code>on-premises</code>, <code>trusted-cloud</code>, <code>same-jurisdiction</code>, <code>any</code><a href="#section-4.1.5-2.1.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+            <li class="normal" id="section-4.1.5-2.2">
+              <p id="section-4.1.5-2.2.1"><strong>AI-Data-Export</strong>: Controls data export for processing<a href="#section-4.1.5-2.2.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.5-2.2.2.1">
+                  <p id="section-4.1.5-2.2.2.1.1">Values: <code>prohibited</code>, <code>aggregated-only</code>, <code>anonymized-only</code>, <code>permitted</code><a href="#section-4.1.5-2.2.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+          </ul>
+</section>
+</div>
+<div id="audit-and-transparency-preferences">
+<section id="section-4.1.6">
+          <h4 id="name-audit-and-transparency-pref">
+<a href="#section-4.1.6" class="section-number selfRef">4.1.6. </a><a href="#name-audit-and-transparency-pref" class="section-name selfRef">Audit and Transparency Preferences</a>
+          </h4>
+<p id="section-4.1.6-1">Control monitoring and accountability:<a href="#section-4.1.6-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.6-2.1">
+              <p id="section-4.1.6-2.1.1"><strong>AI-Audit-Required</strong>: Whether audit logging is required<a href="#section-4.1.6-2.1.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.6-2.1.2.1">
+                  <p id="section-4.1.6-2.1.2.1.1">Values: <code>true</code>, <code>false</code><a href="#section-4.1.6-2.1.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+            <li class="normal" id="section-4.1.6-2.2">
+              <p id="section-4.1.6-2.2.1"><strong>AI-Transparency-Level</strong>: Required disclosure about AI processing<a href="#section-4.1.6-2.2.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.6-2.2.2.1">
+                  <p id="section-4.1.6-2.2.2.1.1">Values: <code>none</code>, <code>purpose-only</code>, <code>detailed</code>, <code>full</code><a href="#section-4.1.6-2.2.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+            <li class="normal" id="section-4.1.6-2.3">
+              <p id="section-4.1.6-2.3.1"><strong>AI-Access-Notification</strong>: Whether access should trigger notifications<a href="#section-4.1.6-2.3.1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.1.6-2.3.2.1">
+                  <p id="section-4.1.6-2.3.2.1.1">Values: <code>none</code>, <code>summary</code>, <code>real-time</code><a href="#section-4.1.6-2.3.2.1.1" class="pilcrow">¶</a></p>
+</li>
+              </ul>
+</li>
+          </ul>
+</section>
+</div>
+</section>
+</div>
+<div id="feature-taxonomy">
+<section id="section-4.2">
+        <h3 id="name-feature-taxonomy">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-feature-taxonomy" class="section-name selfRef">Feature Taxonomy</a>
+        </h3>
+<p id="section-4.2-1">Network traffic features that may be subject to preferences:<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<div id="layer-34-features">
+<section id="section-4.2.1">
+          <h4 id="name-layer-3-4-features">
+<a href="#section-4.2.1" class="section-number selfRef">4.2.1. </a><a href="#name-layer-3-4-features" class="section-name selfRef">Layer 3/4 Features</a>
+          </h4>
+<ul class="normal">
+<li class="normal" id="section-4.2.1-1.1">
+              <p id="section-4.2.1-1.1.1"><code>src-ip</code>, <code>dst-ip</code>, <code>src-port</code>, <code>dst-port</code><a href="#section-4.2.1-1.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-4.2.1-1.2">
+              <p id="section-4.2.1-1.2.1"><code>protocol</code>, <code>ttl</code>, <code>ip-flags</code><a href="#section-4.2.1-1.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-4.2.1-1.3">
+              <p id="section-4.2.1-1.3.1"><code>packet-size</code>, <code>packet-rate</code><a href="#section-4.2.1-1.3.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-4.2.1-1.4">
+              <p id="section-4.2.1-1.4.1"><code>flow-duration</code>, <code>flow-volume</code><a href="#section-4.2.1-1.4.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</section>
+</div>
+<div id="aggregate-features">
+<section id="section-4.2.2">
+          <h4 id="name-aggregate-features">
+<a href="#section-4.2.2" class="section-number selfRef">4.2.2. </a><a href="#name-aggregate-features" class="section-name selfRef">Aggregate Features</a>
+          </h4>
+<ul class="normal">
+<li class="normal" id="section-4.2.2-1.1">
+              <p id="section-4.2.2-1.1.1"><code>flow-count</code>, <code>connection-rate</code><a href="#section-4.2.2-1.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-4.2.2-1.2">
+              <p id="section-4.2.2-1.2.1"><code>bandwidth-usage</code>, <code>traffic-volume</code><a href="#section-4.2.2-1.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-4.2.2-1.3">
+              <p id="section-4.2.2-1.3.1"><code>protocol-distribution</code>, <code>port-distribution</code><a href="#section-4.2.2-1.3.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</section>
+</div>
+<div id="temporal-features">
+<section id="section-4.2.3">
+          <h4 id="name-temporal-features">
+<a href="#section-4.2.3" class="section-number selfRef">4.2.3. </a><a href="#name-temporal-features" class="section-name selfRef">Temporal Features</a>
+          </h4>
+<ul class="normal">
+<li class="normal" id="section-4.2.3-1.1">
+              <p id="section-4.2.3-1.1.1"><code>inter-arrival-time</code>, <code>burst-patterns</code><a href="#section-4.2.3-1.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-4.2.3-1.2">
+              <p id="section-4.2.3-1.2.1"><code>time-of-day-patterns</code>, <code>periodicity</code><a href="#section-4.2.3-1.2.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</section>
+</div>
+<div id="statistical-features">
+<section id="section-4.2.4">
+          <h4 id="name-statistical-features">
+<a href="#section-4.2.4" class="section-number selfRef">4.2.4. </a><a href="#name-statistical-features" class="section-name selfRef">Statistical Features</a>
+          </h4>
+<ul class="normal">
+<li class="normal" id="section-4.2.4-1.1">
+              <p id="section-4.2.4-1.1.1"><code>packet-size-distribution</code>, <code>flow-size-distribution</code><a href="#section-4.2.4-1.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-4.2.4-1.2">
+              <p id="section-4.2.4-1.2.1"><code>traffic-entropy</code>, <code>pattern-regularity</code><a href="#section-4.2.4-1.2.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</section>
+</div>
+<div id="derived-features">
+<section id="section-4.2.5">
+          <h4 id="name-derived-features">
+<a href="#section-4.2.5" class="section-number selfRef">4.2.5. </a><a href="#name-derived-features" class="section-name selfRef">Derived Features</a>
+          </h4>
+<ul class="normal">
+<li class="normal" id="section-4.2.5-1.1">
+              <p id="section-4.2.5-1.1.1"><code>application-signature</code>, <code>behavior-pattern</code><a href="#section-4.2.5-1.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-4.2.5-1.2">
+              <p id="section-4.2.5-1.2.1"><code>anomaly-score</code>, <code>similarity-metric</code><a href="#section-4.2.5-1.2.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="preference-attachment-mechanisms">
+<section id="section-5">
+      <h2 id="name-preference-attachment-mecha">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-preference-attachment-mecha" class="section-name selfRef">Preference Attachment Mechanisms</a>
+      </h2>
+<div id="in-band-signaling">
+<section id="section-5.1">
+        <h3 id="name-in-band-signaling">
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-in-band-signaling" class="section-name selfRef">In-Band Signaling</a>
+        </h3>
+<div id="ipv6-destination-options-header">
+<section id="section-5.1.1">
+          <h4 id="name-ipv6-destination-options-he">
+<a href="#section-5.1.1" class="section-number selfRef">5.1.1. </a><a href="#name-ipv6-destination-options-he" class="section-name selfRef">IPv6 Destination Options Header</a>
+          </h4>
+<p id="section-5.1.1-1">AI preferences can be signaled using IPv6 extension headers:<a href="#section-5.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.1-2"><code>
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|  Next Header  |  Hdr Ext Len  |  Option Type  | Opt Data Len  |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                    AI Preference Token                        |
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</code><a href="#section-5.1.1-2" class="pilcrow">¶</a></p>
+<p id="section-5.1.1-3">Option Type: TBD (to be assigned by IANA)
+Option Data: Compact preference token or URI reference<a href="#section-5.1.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="flow-metadata-export">
+<section id="section-5.1.2">
+          <h4 id="name-flow-metadata-export">
+<a href="#section-5.1.2" class="section-number selfRef">5.1.2. </a><a href="#name-flow-metadata-export" class="section-name selfRef">Flow Metadata Export</a>
+          </h4>
+<p id="section-5.1.2-1">Preferences attached to flow records (e.g., IPFIX/NetFlow):<a href="#section-5.1.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.1.2-2"><code>
+Information Element: aiPreferencePolicy
+ElementId: TBD
+Type: string
+Description: URI or token referencing AI preference policy
+</code><a href="#section-5.1.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="out-of-band-mechanisms">
+<section id="section-5.2">
+        <h3 id="name-out-of-band-mechanisms">
+<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-out-of-band-mechanisms" class="section-name selfRef">Out-of-Band Mechanisms</a>
+        </h3>
+<div id="well-known-uri-for-network-preferences">
+<section id="section-5.2.1">
+          <h4 id="name-well-known-uri-for-network-">
+<a href="#section-5.2.1" class="section-number selfRef">5.2.1. </a><a href="#name-well-known-uri-for-network-" class="section-name selfRef">Well-Known URI for Network Preferences</a>
+          </h4>
+<p id="section-5.2.1-1">Similar to robots.txt, define a well-known URI for network AI preferences:<a href="#section-5.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-5.2.1-2"><code>
+https://network.example.com/.well-known/ai-network-preferences
+</code><a href="#section-5.2.1-2" class="pilcrow">¶</a></p>
+<p id="section-5.2.1-3">Content format:
+```
+User-agent: *
+Processing-scope: aggregate-flows
+Identity-level: anonymized
+Retention-period: 24h
+Allowed-purposes: leak-detection, ddos-protection
+Forbidden-features: payload, timing-precision<a href="#section-5.2.1-3" class="pilcrow">¶</a></p>
+<p id="section-5.2.1-4">User-agent: TrustedMonitor
+Processing-scope: individual-flows
+Identity-level: pseudonymized
+Retention-period: 7d
+```<a href="#section-5.2.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="dns-txt-records">
+<section id="section-5.2.2">
+          <h4 id="name-dns-txt-records">
+<a href="#section-5.2.2" class="section-number selfRef">5.2.2. </a><a href="#name-dns-txt-records" class="section-name selfRef">DNS TXT Records</a>
+          </h4>
+<p id="section-5.2.2-1">AI preferences published via DNS:<a href="#section-5.2.2-1" class="pilcrow">¶</a></p>
+<p id="section-5.2.2-2"><code>
+_aipref.example.com. IN TXT "v=aipref1; scope=aggregate; identity=anon; retention=24h"
+</code><a href="#section-5.2.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="yang-data-models">
+<section id="section-5.2.3">
+          <h4 id="name-yang-data-models">
+<a href="#section-5.2.3" class="section-number selfRef">5.2.3. </a><a href="#name-yang-data-models" class="section-name selfRef">YANG Data Models</a>
+          </h4>
+<p id="section-5.2.3-1">For network management systems, define YANG models:<a href="#section-5.2.3-1" class="pilcrow">¶</a></p>
+<p id="section-5.2.3-2">```yang
+module ietf-ai-network-preferences {
+  namespace "urn:ietf:params:xml:ns:yang:ietf-ai-network-preferences";
+  prefix "aipref";<a href="#section-5.2.3-2" class="pilcrow">¶</a></p>
+<p id="section-5.2.3-3">container ai-preferences {
+    leaf processing-scope {
+      type enumeration {
+        enum none;
+        enum metadata-only;
+        enum aggregate-flows;
+        enum individual-flows;
+      }
+    }<a href="#section-5.2.3-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-5.2.3-4">
+<pre>
+leaf identity-level {
+  type enumeration {
+    enum identified;
+    enum pseudonymized;
+    enum anonymized;
+  }
+}
+
+leaf retention-period {
+  type uint32;
+  units "seconds";
+}
+
+leaf-list allowed-purposes {
+  type string;
+}   } } ```
+</pre><a href="#section-5.2.3-4" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="preference-discovery">
+<section id="section-5.3">
+        <h3 id="name-preference-discovery">
+<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-preference-discovery" class="section-name selfRef">Preference Discovery</a>
+        </h3>
+<p id="section-5.3-1">AI agents <span class="bcp14">MUST</span> discover preferences through this precedence order:<a href="#section-5.3-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-5.3-2">
+<li id="section-5.3-2.1">
+            <p id="section-5.3-2.1.1"><strong>In-band signaling</strong>: Flow-level preferences in packet headers or flow metadata (highest precedence)<a href="#section-5.3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-5.3-2.2">
+            <p id="section-5.3-2.2.1"><strong>Network-level policy</strong>: Configured preferences on network equipment<a href="#section-5.3-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-5.3-2.3">
+            <p id="section-5.3-2.3.1"><strong>DNS-based discovery</strong>: Published preferences via DNS TXT records<a href="#section-5.3-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-5.3-2.4">
+            <p id="section-5.3-2.4.1"><strong>Well-known URI</strong>: HTTP-accessible preference documents<a href="#section-5.3-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-5.3-2.5">
+            <p id="section-5.3-2.5.1"><strong>Default policy</strong>: Conservative defaults when no preferences found (lowest precedence)<a href="#section-5.3-2.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+</section>
+</div>
+</section>
+</div>
+<div id="preference-reconciliation">
+<section id="section-6">
+      <h2 id="name-preference-reconciliation">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-preference-reconciliation" class="section-name selfRef">Preference Reconciliation</a>
+      </h2>
+<div id="multiple-preference-sources">
+<section id="section-6.1">
+        <h3 id="name-multiple-preference-sources">
+<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-multiple-preference-sources" class="section-name selfRef">Multiple Preference Sources</a>
+        </h3>
+<p id="section-6.1-1">When multiple preferences apply, use the following reconciliation rules:<a href="#section-6.1-1" class="pilcrow">¶</a></p>
+<div id="strictest-wins-policy">
+<section id="section-6.1.1">
+          <h4 id="name-strictest-wins-policy">
+<a href="#section-6.1.1" class="section-number selfRef">6.1.1. </a><a href="#name-strictest-wins-policy" class="section-name selfRef">Strictest-Wins Policy</a>
+          </h4>
+<p id="section-6.1.1-1">For conflicting privacy preferences, the strictest/most privacy-preserving <span class="bcp14">MUST</span> be applied:<a href="#section-6.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-6.1.1-2"><code>
+Preference A: AI-Identity-Level: pseudonymized
+Preference B: AI-Identity-Level: anonymized
+Result: AI-Identity-Level: anonymized (stricter)
+</code><a href="#section-6.1.1-2" class="pilcrow">¶</a></p>
+<p id="section-6.1.1-3"><code>
+Preference A: AI-Retention-Period: 7d
+Preference B: AI-Retention-Period: 24h
+Result: AI-Retention-Period: 24h (stricter)
+</code><a href="#section-6.1.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="intersection-for-allowed-features">
+<section id="section-6.1.2">
+          <h4 id="name-intersection-for-allowed-fe">
+<a href="#section-6.1.2" class="section-number selfRef">6.1.2. </a><a href="#name-intersection-for-allowed-fe" class="section-name selfRef">Intersection for Allowed Features</a>
+          </h4>
+<p id="section-6.1.2-1">When multiple preferences specify allowed features, use intersection:<a href="#section-6.1.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.1.2-2"><code>
+Preference A: AI-Allowed-Features: volume, packet-rate, flow-count
+Preference B: AI-Allowed-Features: volume, flow-count, protocol
+Result: AI-Allowed-Features: volume, flow-count (intersection)
+</code><a href="#section-6.1.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="union-for-forbidden-features">
+<section id="section-6.1.3">
+          <h4 id="name-union-for-forbidden-feature">
+<a href="#section-6.1.3" class="section-number selfRef">6.1.3. </a><a href="#name-union-for-forbidden-feature" class="section-name selfRef">Union for Forbidden Features</a>
+          </h4>
+<p id="section-6.1.3-1">When multiple preferences specify forbidden features, use union:<a href="#section-6.1.3-1" class="pilcrow">¶</a></p>
+<p id="section-6.1.3-2"><code>
+Preference A: AI-Forbidden-Features: payload, src-ip
+Preference B: AI-Forbidden-Features: dst-ip, timing-precision
+Result: AI-Forbidden-Features: payload, src-ip, dst-ip, timing-precision
+</code><a href="#section-6.1.3-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="purpose-intersection">
+<section id="section-6.1.4">
+          <h4 id="name-purpose-intersection">
+<a href="#section-6.1.4" class="section-number selfRef">6.1.4. </a><a href="#name-purpose-intersection" class="section-name selfRef">Purpose Intersection</a>
+          </h4>
+<p id="section-6.1.4-1">Processing is only permitted for purposes allowed by all applicable preferences:<a href="#section-6.1.4-1" class="pilcrow">¶</a></p>
+<p id="section-6.1.4-2"><code>
+Preference A: AI-Allowed-Purposes: leak-detection, ddos-protection, qos
+Preference B: AI-Allowed-Purposes: ddos-protection, qos, security-monitoring
+Result: AI-Allowed-Purposes: ddos-protection, qos
+</code><a href="#section-6.1.4-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="conflict-resolution-algorithm">
+<section id="section-6.2">
+        <h3 id="name-conflict-resolution-algorit">
+<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-conflict-resolution-algorit" class="section-name selfRef">Conflict Resolution Algorithm</a>
+        </h3>
+<p id="section-6.2-1">```
+Algorithm: Reconcile-AI-Preferences(preferences[])<a href="#section-6.2-1" class="pilcrow">¶</a></p>
+<p id="section-6.2-2">result = new AIPreferenceSet()<a href="#section-6.2-2" class="pilcrow">¶</a></p>
+<p id="section-6.2-3">// Processing scope - strictest wins
+  result.scope = min(preferences.map(p =&gt; p.scope))<a href="#section-6.2-3" class="pilcrow">¶</a></p>
+<p id="section-6.2-4">// Identity level - strictest wins
+  result.identity = strictest(preferences.map(p =&gt; p.identity))<a href="#section-6.2-4" class="pilcrow">¶</a></p>
+<p id="section-6.2-5">// Retention period - shortest wins
+  result.retention = min(preferences.map(p =&gt; p.retention))<a href="#section-6.2-5" class="pilcrow">¶</a></p>
+<p id="section-6.2-6">// Allowed features - intersection
+  result.allowed_features = intersect(preferences.map(p =&gt; p.allowed_features))<a href="#section-6.2-6" class="pilcrow">¶</a></p>
+<p id="section-6.2-7">// Forbidden features - union
+  result.forbidden_features = union(preferences.map(p =&gt; p.forbidden_features))<a href="#section-6.2-7" class="pilcrow">¶</a></p>
+<p id="section-6.2-8">// Allowed purposes - intersection
+  result.allowed_purposes = intersect(preferences.map(p =&gt; p.allowed_purposes))<a href="#section-6.2-8" class="pilcrow">¶</a></p>
+<p id="section-6.2-9">// Location constraints - strictest wins
+  result.location = strictest(preferences.map(p =&gt; p.location))<a href="#section-6.2-9" class="pilcrow">¶</a></p>
+<p id="section-6.2-10">// Audit requirements - any true makes result true
+  result.audit_required = any(preferences.map(p =&gt; p.audit_required))<a href="#section-6.2-10" class="pilcrow">¶</a></p>
+<p id="section-6.2-11">return result
+```<a href="#section-6.2-11" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="privacy-preserving-techniques">
+<section id="section-7">
+      <h2 id="name-privacy-preserving-techniqu">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-privacy-preserving-techniqu" class="section-name selfRef">Privacy-Preserving Techniques</a>
+      </h2>
+<div id="data-minimization">
+<section id="section-7.1">
+        <h3 id="name-data-minimization">
+<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-data-minimization" class="section-name selfRef">Data Minimization</a>
+        </h3>
+<p id="section-7.1-1">AI agents <span class="bcp14">SHOULD</span> use privacy-preserving techniques to minimize data exposure:<a href="#section-7.1-1" class="pilcrow">¶</a></p>
+<div id="k-anonymity-for-flow-records">
+<section id="section-7.1.1">
+          <h4 id="name-k-anonymity-for-flow-record">
+<a href="#section-7.1.1" class="section-number selfRef">7.1.1. </a><a href="#name-k-anonymity-for-flow-record" class="section-name selfRef">K-Anonymity for Flow Records</a>
+          </h4>
+<p id="section-7.1.1-1">Ensure that flow records cannot be linked to fewer than k individual sources:<a href="#section-7.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-7.1.1-2">```
+Original flows:
+  192.168.1.5 -&gt; 10.0.0.1 (100MB)
+  192.168.1.8 -&gt; 10.0.0.1 (150MB)<a href="#section-7.1.1-2" class="pilcrow">¶</a></p>
+<p id="section-7.1.1-3">K-anonymized (k=10):
+  192.168.1.0/28 -&gt; 10.0.0.0/24 (2.5GB, 10 sources)
+```<a href="#section-7.1.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="differential-privacy-for-statistics">
+<section id="section-7.1.2">
+          <h4 id="name-differential-privacy-for-st">
+<a href="#section-7.1.2" class="section-number selfRef">7.1.2. </a><a href="#name-differential-privacy-for-st" class="section-name selfRef">Differential Privacy for Statistics</a>
+          </h4>
+<p id="section-7.1.2-1">Add calibrated noise to aggregate statistics:<a href="#section-7.1.2-1" class="pilcrow">¶</a></p>
+<p id="section-7.1.2-2"><code>
+True bandwidth usage by prefix: 1.5 Gbps
+Reported with ε=0.1 differential privacy: 1.53 Gbps
+</code><a href="#section-7.1.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="temporal-aggregation">
+<section id="section-7.1.3">
+          <h4 id="name-temporal-aggregation">
+<a href="#section-7.1.3" class="section-number selfRef">7.1.3. </a><a href="#name-temporal-aggregation" class="section-name selfRef">Temporal Aggregation</a>
+          </h4>
+<p id="section-7.1.3-1">Aggregate traffic over time windows to prevent timing attacks:<a href="#section-7.1.3-1" class="pilcrow">¶</a></p>
+<p id="section-7.1.3-2"><code>
+Original: per-packet timestamps
+Privacy-preserving: 5-minute volume aggregates
+</code><a href="#section-7.1.3-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="feature-suppression">
+<section id="section-7.1.4">
+          <h4 id="name-feature-suppression">
+<a href="#section-7.1.4" class="section-number selfRef">7.1.4. </a><a href="#name-feature-suppression" class="section-name selfRef">Feature Suppression</a>
+          </h4>
+<p id="section-7.1.4-1">Remove features that enable inference of sensitive attributes:<a href="#section-7.1.4-1" class="pilcrow">¶</a></p>
+<p id="section-7.1.4-2"><code>
+Full feature set: [volume, packet_rate, port_dist, size_dist, timing_pattern]
+Suppressed: [volume, packet_rate]  // Remove timing/size that reveal application
+</code><a href="#section-7.1.4-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="pseudonymization-and-anonymization">
+<section id="section-7.2">
+        <h3 id="name-pseudonymization-and-anonym">
+<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-pseudonymization-and-anonym" class="section-name selfRef">Pseudonymization and Anonymization</a>
+        </h3>
+<div id="consistent-pseudonyms">
+<section id="section-7.2.1">
+          <h4 id="name-consistent-pseudonyms">
+<a href="#section-7.2.1" class="section-number selfRef">7.2.1. </a><a href="#name-consistent-pseudonyms" class="section-name selfRef">Consistent Pseudonyms</a>
+          </h4>
+<p id="section-7.2.1-1">Use cryptographic hashing with rotation for pseudonyms:<a href="#section-7.2.1-1" class="pilcrow">¶</a></p>
+<p id="section-7.2.1-2"><code>
+pseudonym = HMAC-SHA256(key_of_day, real_identifier)
+</code><a href="#section-7.2.1-2" class="pilcrow">¶</a></p>
+<p id="section-7.2.1-3">Rotation period specified by <code>AI-Retention-Period</code> preference.<a href="#section-7.2.1-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="ip-address-anonymization">
+<section id="section-7.2.2">
+          <h4 id="name-ip-address-anonymization">
+<a href="#section-7.2.2" class="section-number selfRef">7.2.2. </a><a href="#name-ip-address-anonymization" class="section-name selfRef">IP Address Anonymization</a>
+          </h4>
+<p id="section-7.2.2-1">Apply prefix-preserving anonymization:<a href="#section-7.2.2-1" class="pilcrow">¶</a></p>
+<p id="section-7.2.2-2"><code>
+Original: 192.168.1.5
+Anonymized: 10.200.45.78 (preserves /24 boundaries)
+</code><a href="#section-7.2.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="secure-multi-party-computation">
+<section id="section-7.3">
+        <h3 id="name-secure-multi-party-computat">
+<a href="#section-7.3" class="section-number selfRef">7.3. </a><a href="#name-secure-multi-party-computat" class="section-name selfRef">Secure Multi-Party Computation</a>
+        </h3>
+<p id="section-7.3-1">For multi-stakeholder scenarios, use secure computation:<a href="#section-7.3-1" class="pilcrow">¶</a></p>
+<p id="section-7.3-2">```
+Party A: Has flow records
+Party B: Has anomaly detection model
+Goal: Detect anomalies without A revealing flows or B revealing model<a href="#section-7.3-2" class="pilcrow">¶</a></p>
+<p id="section-7.3-3">Solution: MPC protocol where:
+  - A learns only: anomaly/normal classification
+  - B learns only: aggregate statistics
+  - Neither learns other's private data
+```<a href="#section-7.3-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-8">
+      <h2 id="name-security-considerations">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<div id="preference-integrity">
+<section id="section-8.1">
+        <h3 id="name-preference-integrity">
+<a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-preference-integrity" class="section-name selfRef">Preference Integrity</a>
+        </h3>
+<p id="section-8.1-1">Preferences <span class="bcp14">MUST</span> be protected against tampering:<a href="#section-8.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.1-2.1">
+            <p id="section-8.1-2.1.1">Use cryptographic signatures for preference documents<a href="#section-8.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.1-2.2">
+            <p id="section-8.1-2.2.1">Authenticate preference sources using existing mechanisms (DNSSEC, TLS)<a href="#section-8.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.1-2.3">
+            <p id="section-8.1-2.3.1">Validate preference tokens before applying<a href="#section-8.1-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.1-2.4">
+            <p id="section-8.1-2.4.1">Audit preference changes and access<a href="#section-8.1-2.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="preference-confidentiality">
+<section id="section-8.2">
+        <h3 id="name-preference-confidentiality">
+<a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-preference-confidentiality" class="section-name selfRef">Preference Confidentiality</a>
+        </h3>
+<p id="section-8.2-1">Some preferences may themselves be sensitive:<a href="#section-8.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.2-2.1">
+            <p id="section-8.2-2.1.1">Encrypt preference transmission where appropriate<a href="#section-8.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.2-2.2">
+            <p id="section-8.2-2.2.1">Consider privacy implications of preference disclosure<a href="#section-8.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.2-2.3">
+            <p id="section-8.2-2.3.1">Allow private preference channels for sensitive policies<a href="#section-8.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="enforcement-limitations">
+<section id="section-8.3">
+        <h3 id="name-enforcement-limitations">
+<a href="#section-8.3" class="section-number selfRef">8.3. </a><a href="#name-enforcement-limitations" class="section-name selfRef">Enforcement Limitations</a>
+        </h3>
+<p id="section-8.3-1">This specification defines preference expression, not technical enforcement:<a href="#section-8.3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.3-2.1">
+            <p id="section-8.3-2.1.1">Preferences are advisory, not mandatory enforcement mechanisms<a href="#section-8.3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.3-2.2">
+            <p id="section-8.3-2.2.1">AI agents <span class="bcp14">MUST</span> respect preferences but malicious agents could ignore them<a href="#section-8.3-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.3-2.3">
+            <p id="section-8.3-2.3.1">Audit and compliance monitoring are essential<a href="#section-8.3-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.3-2.4">
+            <p id="section-8.3-2.4.1">Legal and contractual mechanisms may be necessary for enforcement<a href="#section-8.3-2.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="privacy-attacks">
+<section id="section-8.4">
+        <h3 id="name-privacy-attacks">
+<a href="#section-8.4" class="section-number selfRef">8.4. </a><a href="#name-privacy-attacks" class="section-name selfRef">Privacy Attacks</a>
+        </h3>
+<div id="inference-attacks">
+<section id="section-8.4.1">
+          <h4 id="name-inference-attacks">
+<a href="#section-8.4.1" class="section-number selfRef">8.4.1. </a><a href="#name-inference-attacks" class="section-name selfRef">Inference Attacks</a>
+          </h4>
+<p id="section-8.4.1-1">Even aggregated/anonymized data may enable inference:<a href="#section-8.4.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.4.1-2.1">
+              <p id="section-8.4.1-2.1.1">Use differential privacy with appropriate privacy budgets<a href="#section-8.4.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-8.4.1-2.2">
+              <p id="section-8.4.1-2.2.1">Implement minimum aggregation thresholds (k-anonymity)<a href="#section-8.4.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-8.4.1-2.3">
+              <p id="section-8.4.1-2.3.1">Rotate pseudonyms regularly<a href="#section-8.4.1-2.3.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-8.4.1-2.4">
+              <p id="section-8.4.1-2.4.1">Monitor for correlation attacks across data releases<a href="#section-8.4.1-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</section>
+</div>
+<div id="timing-attacks">
+<section id="section-8.4.2">
+          <h4 id="name-timing-attacks">
+<a href="#section-8.4.2" class="section-number selfRef">8.4.2. </a><a href="#name-timing-attacks" class="section-name selfRef">Timing Attacks</a>
+          </h4>
+<p id="section-8.4.2-1">Traffic timing can reveal sensitive information:<a href="#section-8.4.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.4.2-2.1">
+              <p id="section-8.4.2-2.1.1">Aggregate temporal data per preferences<a href="#section-8.4.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-8.4.2-2.2">
+              <p id="section-8.4.2-2.2.1">Add random delays or buffering where appropriate<a href="#section-8.4.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-8.4.2-2.3">
+              <p id="section-8.4.2-2.3.1">Suppress high-resolution timing features<a href="#section-8.4.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</section>
+</div>
+<div id="fingerprinting">
+<section id="section-8.4.3">
+          <h4 id="name-fingerprinting">
+<a href="#section-8.4.3" class="section-number selfRef">8.4.3. </a><a href="#name-fingerprinting" class="section-name selfRef">Fingerprinting</a>
+          </h4>
+<p id="section-8.4.3-1">Combinations of features may uniquely identify users/flows:<a href="#section-8.4.3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.4.3-2.1">
+              <p id="section-8.4.3-2.1.1">Limit feature combinations available to AI agents<a href="#section-8.4.3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-8.4.3-2.2">
+              <p id="section-8.4.3-2.2.1">Use generalization and suppression techniques<a href="#section-8.4.3-2.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-8.4.3-2.3">
+              <p id="section-8.4.3-2.3.1">Monitor for rare combinations that enable identification<a href="#section-8.4.3-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</section>
+</div>
+</section>
+</div>
+<div id="denial-of-service">
+<section id="section-8.5">
+        <h3 id="name-denial-of-service">
+<a href="#section-8.5" class="section-number selfRef">8.5. </a><a href="#name-denial-of-service" class="section-name selfRef">Denial of Service</a>
+        </h3>
+<p id="section-8.5-1">Preference processing must not enable DoS:<a href="#section-8.5-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-8.5-2.1">
+            <p id="section-8.5-2.1.1">Limit preference document size and complexity<a href="#section-8.5-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.5-2.2">
+            <p id="section-8.5-2.2.1">Cache and validate preferences<a href="#section-8.5-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.5-2.3">
+            <p id="section-8.5-2.3.1">Rate-limit preference lookups<a href="#section-8.5-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-8.5-2.4">
+            <p id="section-8.5-2.4.1">Use default conservative policies when discovery fails<a href="#section-8.5-2.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+</section>
+</div>
+<div id="iana-considerations">
+<section id="section-9">
+      <h2 id="name-iana-considerations">
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<div id="ipv6-destination-options">
+<section id="section-9.1">
+        <h3 id="name-ipv6-destination-options">
+<a href="#section-9.1" class="section-number selfRef">9.1. </a><a href="#name-ipv6-destination-options" class="section-name selfRef">IPv6 Destination Options</a>
+        </h3>
+<p id="section-9.1-1">IANA is requested to assign a new IPv6 Destination Option Type:<a href="#section-9.1-1" class="pilcrow">¶</a></p>
+<p id="section-9.1-2"><code>
+Option Type: TBD
+Description: AI Processing Preferences
+Reference: This document
+</code><a href="#section-9.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="well-known-uri">
+<section id="section-9.2">
+        <h3 id="name-well-known-uri">
+<a href="#section-9.2" class="section-number selfRef">9.2. </a><a href="#name-well-known-uri" class="section-name selfRef">Well-Known URI</a>
+        </h3>
+<p id="section-9.2-1">IANA is requested to register a new well-known URI:<a href="#section-9.2-1" class="pilcrow">¶</a></p>
+<p id="section-9.2-2"><code>
+URI suffix: ai-network-preferences
+Change controller: IETF
+Specification document: This document
+Status: permanent
+</code><a href="#section-9.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="ipfix-information-elements">
+<section id="section-9.3">
+        <h3 id="name-ipfix-information-elements">
+<a href="#section-9.3" class="section-number selfRef">9.3. </a><a href="#name-ipfix-information-elements" class="section-name selfRef">IPFIX Information Elements</a>
+        </h3>
+<p id="section-9.3-1">IANA is requested to assign new IPFIX Information Elements:<a href="#section-9.3-1" class="pilcrow">¶</a></p>
+<p id="section-9.3-2">```
+ElementId: TBD1
+Name: aiPreferencePolicy
+Data Type: string
+Description: URI or token referencing AI preference policy
+Reference: This document<a href="#section-9.3-2" class="pilcrow">¶</a></p>
+<p id="section-9.3-3">ElementId: TBD2
+Name: aiProcessingScope
+Data Type: unsigned8
+Description: Allowed scope of AI processing
+Reference: This document<a href="#section-9.3-3" class="pilcrow">¶</a></p>
+<p id="section-9.3-4">ElementId: TBD3
+Name: aiIdentityLevel
+Data Type: unsigned8
+Description: Required identity protection level
+Reference: This document
+```<a href="#section-9.3-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="ai-preference-parameters-registry">
+<section id="section-9.4">
+        <h3 id="name-ai-preference-parameters-re">
+<a href="#section-9.4" class="section-number selfRef">9.4. </a><a href="#name-ai-preference-parameters-re" class="section-name selfRef">AI Preference Parameters Registry</a>
+        </h3>
+<p id="section-9.4-1">IANA is requested to create a new registry: "AI Network Preference Parameters"<a href="#section-9.4-1" class="pilcrow">¶</a></p>
+<p id="section-9.4-2">Initial entries:<a href="#section-9.4-2" class="pilcrow">¶</a></p>
+<p id="section-9.4-3">```
+Parameter Name: AI-Processing-Scope
+Allowed Values: none, metadata-only, aggregate-flows, individual-flows, full-access
+Reference: This document<a href="#section-9.4-3" class="pilcrow">¶</a></p>
+<p id="section-9.4-4">Parameter Name: AI-Identity-Level
+Allowed Values: identified, pseudonymized, anonymized, aggregated, no-identity
+Reference: This document<a href="#section-9.4-4" class="pilcrow">¶</a></p>
+<p id="section-9.4-5">Parameter Name: AI-Processing-Purpose
+Allowed Values: leak-detection, ddos-protection, traffic-engineering, qos-optimization,
+                security-monitoring, performance-analysis
+Reference: This document<a href="#section-9.4-5" class="pilcrow">¶</a></p>
+<p id="section-9.4-6">[Additional parameters as defined in Section 5]
+```<a href="#section-9.4-6" class="pilcrow">¶</a></p>
+<p id="section-9.4-7">Registration procedure: Specification Required (RFC 8126)<a href="#section-9.4-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="network-traffic-feature-registry">
+<section id="section-9.5">
+        <h3 id="name-network-traffic-feature-reg">
+<a href="#section-9.5" class="section-number selfRef">9.5. </a><a href="#name-network-traffic-feature-reg" class="section-name selfRef">Network Traffic Feature Registry</a>
+        </h3>
+<p id="section-9.5-1">IANA is requested to create a new registry: "AI Network Traffic Features"<a href="#section-9.5-1" class="pilcrow">¶</a></p>
+<p id="section-9.5-2">Initial entries as defined in Section 5.2.<a href="#section-9.5-2" class="pilcrow">¶</a></p>
+<p id="section-9.5-3">Registration procedure: Expert Review (RFC 8126)<a href="#section-9.5-3" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="implementation-considerations">
+<section id="section-10">
+      <h2 id="name-implementation-consideratio">
+<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-implementation-consideratio" class="section-name selfRef">Implementation Considerations</a>
+      </h2>
+<div id="ai-agent-implementation">
+<section id="section-10.1">
+        <h3 id="name-ai-agent-implementation">
+<a href="#section-10.1" class="section-number selfRef">10.1. </a><a href="#name-ai-agent-implementation" class="section-name selfRef">AI Agent Implementation</a>
+        </h3>
+<p id="section-10.1-1">AI agents <span class="bcp14">SHOULD</span>:<a href="#section-10.1-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-10.1-2">
+<li id="section-10.1-2.1">
+            <p id="section-10.1-2.1.1"><strong>Discover preferences</strong> using all available mechanisms<a href="#section-10.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-10.1-2.2">
+            <p id="section-10.1-2.2.1"><strong>Reconcile preferences</strong> using the algorithm in Section 6.2<a href="#section-10.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-10.1-2.3">
+            <p id="section-10.1-2.3.1"><strong>Filter data</strong> before processing to match preferences<a href="#section-10.1-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-10.1-2.4">
+            <p id="section-10.1-2.4.1"><strong>Apply privacy techniques</strong> (aggregation, anonymization) as required<a href="#section-10.1-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-10.1-2.5">
+            <p id="section-10.1-2.5.1"><strong>Log access</strong> if audit is required<a href="#section-10.1-2.5.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-10.1-2.6">
+            <p id="section-10.1-2.6.1"><strong>Fail closed</strong> if preferences cannot be determined<a href="#section-10.1-2.6.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+<p id="section-10.1-3">Example implementation flow:<a href="#section-10.1-3" class="pilcrow">¶</a></p>
+<p id="section-10.1-4">```python
+def process_network_traffic(flow_data, ai_agent_id):
+    # 1. Discover preferences
+    prefs = discover_preferences(flow_data.source_network)<a href="#section-10.1-4" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-10.1-5">
+<pre>
+# 2. Reconcile if multiple sources
+effective_prefs = reconcile_preferences(prefs)
+
+# 3. Check if processing is allowed
+if not can_process(ai_agent_id, effective_prefs):
+    return None  # Processing not permitted
+
+# 4. Filter and transform data
+filtered_data = apply_preference_filters(flow_data, effective_prefs)
+
+# 5. Apply privacy-preserving techniques
+private_data = apply_privacy_transforms(filtered_data, effective_prefs)
+
+# 6. Audit if required
+if effective_prefs.audit_required:
+    log_access(ai_agent_id, flow_data.source, effective_prefs)
+
+# 7. Process with AI
+return ai_agent.analyze(private_data) ```
+</pre><a href="#section-10.1-5" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="network-equipment-implementation">
+<section id="section-10.2">
+        <h3 id="name-network-equipment-implement">
+<a href="#section-10.2" class="section-number selfRef">10.2. </a><a href="#name-network-equipment-implement" class="section-name selfRef">Network Equipment Implementation</a>
+        </h3>
+<p id="section-10.2-1">Network devices (routers, switches, flow collectors) <span class="bcp14">SHOULD</span>:<a href="#section-10.2-1" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="normal type-1" id="section-10.2-2">
+<li id="section-10.2-2.1">
+            <p id="section-10.2-2.1.1"><strong>Accept preference configuration</strong> from administrators<a href="#section-10.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-10.2-2.2">
+            <p id="section-10.2-2.2.1"><strong>Attach preferences</strong> to flow metadata (IPFIX/NetFlow)<a href="#section-10.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-10.2-2.3">
+            <p id="section-10.2-2.3.1"><strong>Enforce basic filtering</strong> before export<a href="#section-10.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-10.2-2.4">
+            <p id="section-10.2-2.4.1"><strong>Support preference signaling</strong> in packet headers (IPv6 options)<a href="#section-10.2-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li id="section-10.2-2.5">
+            <p id="section-10.2-2.5.1"><strong>Publish preferences</strong> via DNS or well-known URIs<a href="#section-10.2-2.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ol>
+</section>
+</div>
+<div id="deployment-strategies">
+<section id="section-10.3">
+        <h3 id="name-deployment-strategies">
+<a href="#section-10.3" class="section-number selfRef">10.3. </a><a href="#name-deployment-strategies" class="section-name selfRef">Deployment Strategies</a>
+        </h3>
+<div id="incremental-deployment">
+<section id="section-10.3.1">
+          <h4 id="name-incremental-deployment">
+<a href="#section-10.3.1" class="section-number selfRef">10.3.1. </a><a href="#name-incremental-deployment" class="section-name selfRef">Incremental Deployment</a>
+          </h4>
+<p id="section-10.3.1-1">Start with coarse-grained preferences and refine over time:<a href="#section-10.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-10.3.1-2">Phase 1: Network-wide default policy
+Phase 2: Per-tenant or per-prefix policies
+Phase 3: Per-flow signaling for critical traffic
+Phase 4: Dynamic preference negotiation<a href="#section-10.3.1-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="backwards-compatibility">
+<section id="section-10.3.2">
+          <h4 id="name-backwards-compatibility">
+<a href="#section-10.3.2" class="section-number selfRef">10.3.2. </a><a href="#name-backwards-compatibility" class="section-name selfRef">Backwards Compatibility</a>
+          </h4>
+<p id="section-10.3.2-1">For equipment that doesn't support AI preferences:<a href="#section-10.3.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-10.3.2-2.1">
+              <p id="section-10.3.2-2.1.1">Use conservative default policies<a href="#section-10.3.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-10.3.2-2.2">
+              <p id="section-10.3.2-2.2.1">Deploy preference enforcement proxies<a href="#section-10.3.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-10.3.2-2.3">
+              <p id="section-10.3.2-2.3.1">Leverage existing privacy mechanisms (ACLs, sampling)<a href="#section-10.3.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+            <li class="normal" id="section-10.3.2-2.4">
+              <p id="section-10.3.2-2.4.1">Monitor and audit access<a href="#section-10.3.2-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          </ul>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="examples">
+<section id="section-11">
+      <h2 id="name-examples">
+<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-examples" class="section-name selfRef">Examples</a>
+      </h2>
+<div id="example-1-isp-fair-usage-monitoring">
+<section id="section-11.1">
+        <h3 id="name-example-1-isp-fair-usage-mo">
+<a href="#section-11.1" class="section-number selfRef">11.1. </a><a href="#name-example-1-isp-fair-usage-mo" class="section-name selfRef">Example 1: ISP Fair Usage Monitoring</a>
+        </h3>
+<p id="section-11.1-1">An ISP wants to detect customers violating fair usage policies while protecting privacy:<a href="#section-11.1-1" class="pilcrow">¶</a></p>
+<p id="section-11.1-2"><strong>Preference Configuration:</strong>
+          <code>
+AI-Processing-Purpose: leak-detection
+AI-Processing-Scope: aggregate-flows
+AI-Temporal-Granularity: 5min
+AI-Identity-Level: pseudonymized
+AI-Retention-Period: 24h
+AI-Allowed-Features: volume, flow-count, protocol-distribution
+AI-Forbidden-Features: dst-ip, payload, timing-precision
+AI-Aggregation-Level: per-customer
+</code><a href="#section-11.1-2" class="pilcrow">¶</a></p>
+<p id="section-11.1-3"><strong>AI Agent Behavior:</strong>
+- Receives 5-minute aggregate volumes per customer pseudonym
+- Analyzes for outliers (&gt;95th percentile sustained)
+- Cannot identify specific destinations or applications
+- Cannot track individual flows
+- Data deleted after 24 hours<a href="#section-11.1-3" class="pilcrow">¶</a></p>
+<p id="section-11.1-4"><strong>Privacy Protection:</strong>
+- Customer identity pseudonymized (rotated daily)
+- No access to traffic content or specific destinations
+- Only aggregate statistics available
+- Short retention period limits exposure<a href="#section-11.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="example-2-ddos-detection-in-multi-tenant-data-center">
+<section id="section-11.2">
+        <h3 id="name-example-2-ddos-detection-in">
+<a href="#section-11.2" class="section-number selfRef">11.2. </a><a href="#name-example-2-ddos-detection-in" class="section-name selfRef">Example 2: DDoS Detection in Multi-Tenant Data Center</a>
+        </h3>
+<p id="section-11.2-1">Data center operator protects against DDoS while respecting tenant preferences:<a href="#section-11.2-1" class="pilcrow">¶</a></p>
+<p id="section-11.2-2"><strong>Tenant A (Relaxed) Preferences:</strong>
+          <code>
+AI-Processing-Purpose: ddos-protection
+AI-Processing-Scope: individual-flows
+AI-Identity-Level: pseudonymized
+AI-Allowed-Features: src-ip, dst-ip, packet-rate, protocol
+</code><a href="#section-11.2-2" class="pilcrow">¶</a></p>
+<p id="section-11.2-3"><strong>Tenant B (Strict) Preferences:</strong>
+          <code>
+AI-Processing-Purpose: ddos-protection
+AI-Processing-Scope: aggregate-flows
+AI-Identity-Level: anonymized
+AI-Allowed-Features: packet-rate, flow-count
+AI-Forbidden-Features: src-ip, dst-ip
+</code><a href="#section-11.2-3" class="pilcrow">¶</a></p>
+<p id="section-11.2-4"><strong>Reconciled for Shared Infrastructure:</strong>
+          <code>
+AI-Processing-Purpose: ddos-protection
+AI-Processing-Scope: aggregate-flows (stricter)
+AI-Identity-Level: anonymized (stricter)
+AI-Allowed-Features: packet-rate, flow-count (intersection)
+AI-Forbidden-Features: src-ip, dst-ip (union from Tenant B)
+</code><a href="#section-11.2-4" class="pilcrow">¶</a></p>
+<p id="section-11.2-5"><strong>AI Agent Behavior:</strong>
+- Monitors aggregate packet rates and connection counts
+- Detects anomalous patterns without individual flow tracking
+- Triggers mitigation based on aggregate statistics
+- Cannot attribute specific traffic to individual tenants<a href="#section-11.2-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="example-3-enterprise-network-with-regulatory-requirements">
+<section id="section-11.3">
+        <h3 id="name-example-3-enterprise-networ">
+<a href="#section-11.3" class="section-number selfRef">11.3. </a><a href="#name-example-3-enterprise-networ" class="section-name selfRef">Example 3: Enterprise Network with Regulatory Requirements</a>
+        </h3>
+<p id="section-11.3-1">Enterprise in regulated industry (healthcare/finance) with strict privacy requirements:<a href="#section-11.3-1" class="pilcrow">¶</a></p>
+<p id="section-11.3-2"><strong>Preference Configuration:</strong>
+          <code>
+AI-Processing-Purpose: security-monitoring, performance-analysis
+AI-Processing-Scope: metadata-only
+AI-Identity-Level: no-identity
+AI-Retention-Period: 1h
+AI-Allowed-Features: volume, protocol, flow-count
+AI-Forbidden-Features: ip-addresses, timing-precision, payload
+AI-Processing-Location: on-premises
+AI-Data-Export: prohibited
+AI-Audit-Required: true
+AI-Transparency-Level: full
+</code><a href="#section-11.3-2" class="pilcrow">¶</a></p>
+<p id="section-11.3-3"><strong>AI Agent Behavior:</strong>
+- Processes only aggregate traffic volumes and protocol distribution
+- No access to identity information (IPs suppressed)
+- All processing occurs on-premises
+- Cannot export data to cloud services
+- All access logged for compliance audit
+- Provides full transparency reports<a href="#section-11.3-3" class="pilcrow">¶</a></p>
+<p id="section-11.3-4"><strong>Privacy Protection:</strong>
+- Cannot correlate traffic to individuals or departments
+- Short retention prevents long-term pattern analysis
+- On-premises processing prevents data exposure
+- Audit trail for regulatory compliance<a href="#section-11.3-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="operational-considerations">
+<section id="section-12">
+      <h2 id="name-operational-considerations">
+<a href="#section-12" class="section-number selfRef">12. </a><a href="#name-operational-considerations" class="section-name selfRef">Operational Considerations</a>
+      </h2>
+<div id="monitoring-and-compliance">
+<section id="section-12.1">
+        <h3 id="name-monitoring-and-compliance">
+<a href="#section-12.1" class="section-number selfRef">12.1. </a><a href="#name-monitoring-and-compliance" class="section-name selfRef">Monitoring and Compliance</a>
+        </h3>
+<p id="section-12.1-1">Operators <span class="bcp14">SHOULD</span>:<a href="#section-12.1-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-12.1-2.1">
+            <p id="section-12.1-2.1.1">Monitor AI agent compliance with preferences<a href="#section-12.1-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-12.1-2.2">
+            <p id="section-12.1-2.2.1">Log preference violations and access patterns<a href="#section-12.1-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-12.1-2.3">
+            <p id="section-12.1-2.3.1">Generate periodic compliance reports<a href="#section-12.1-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-12.1-2.4">
+            <p id="section-12.1-2.4.1">Alert on unexpected data access<a href="#section-12.1-2.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="performance-impact">
+<section id="section-12.2">
+        <h3 id="name-performance-impact">
+<a href="#section-12.2" class="section-number selfRef">12.2. </a><a href="#name-performance-impact" class="section-name selfRef">Performance Impact</a>
+        </h3>
+<p id="section-12.2-1">Preference enforcement may impact performance:<a href="#section-12.2-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-12.2-2.1">
+            <p id="section-12.2-2.1.1">Preference discovery adds latency (mitigate with caching)<a href="#section-12.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-12.2-2.2">
+            <p id="section-12.2-2.2.1">Data filtering/transformation adds processing overhead<a href="#section-12.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-12.2-2.3">
+            <p id="section-12.2-2.3.1">Privacy-preserving techniques (DP, MPC) can be expensive<a href="#section-12.2-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-12.2-2.4">
+            <p id="section-12.2-2.4.1">Balance privacy requirements with operational needs<a href="#section-12.2-2.4.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+<div id="preference-management">
+<section id="section-12.3">
+        <h3 id="name-preference-management">
+<a href="#section-12.3" class="section-number selfRef">12.3. </a><a href="#name-preference-management" class="section-name selfRef">Preference Management</a>
+        </h3>
+<p id="section-12.3-1">Organizations should establish processes for:<a href="#section-12.3-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-12.3-2.1">
+            <p id="section-12.3-2.1.1">Defining and updating preferences<a href="#section-12.3-2.1.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-12.3-2.2">
+            <p id="section-12.3-2.2.1">Reconciling stakeholder requirements<a href="#section-12.3-2.2.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-12.3-2.3">
+            <p id="section-12.3-2.3.1">Testing preference effectiveness<a href="#section-12.3-2.3.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-12.3-2.4">
+            <p id="section-12.3-2.4.1">Responding to privacy incidents<a href="#section-12.3-2.4.1" class="pilcrow">¶</a></p>
+</li>
+          <li class="normal" id="section-12.3-2.5">
+            <p id="section-12.3-2.5.1">Reviewing and auditing AI access<a href="#section-12.3-2.5.1" class="pilcrow">¶</a></p>
+</li>
+        </ul>
+</section>
+</div>
+</section>
+</div>
+<div id="sec-combined-references">
+<section id="section-13">
+      <h2 id="name-references">
+<a href="#section-13" class="section-number selfRef">13. </a><a href="#name-references" class="section-name selfRef">References</a>
+      </h2>
+<div id="sec-normative-references">
+<section id="section-13.1">
+        <h3 id="name-normative-references">
+<a href="#section-13.1" class="section-number selfRef">13.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
+<dl class="references">
+<dt id="RFC2119">[RFC2119]</dt>
+        <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8174">[RFC8174]</dt>
+        <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8615">[RFC8615]</dt>
+        <dd>
+<span class="refAuthor">Nottingham, M.</span>, <span class="refTitle">"Well-Known Uniform Resource Identifiers (URIs)"</span>, <span class="seriesInfo">RFC 8615</span>, <span class="seriesInfo">DOI 10.17487/RFC8615</span>, <time datetime="2019-05" class="refDate">May 2019</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8615">https://www.rfc-editor.org/rfc/rfc8615</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC9309">[RFC9309]</dt>
+      <dd>
+<span class="refAuthor">Koster, M.</span>, <span class="refAuthor">Illyes, G.</span>, <span class="refAuthor">Zeller, H.</span>, and <span class="refAuthor">L. Sassman</span>, <span class="refTitle">"Robots Exclusion Protocol"</span>, <span class="seriesInfo">RFC 9309</span>, <span class="seriesInfo">DOI 10.17487/RFC9309</span>, <time datetime="2022-09" class="refDate">September 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9309">https://www.rfc-editor.org/rfc/rfc9309</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="sec-informative-references">
+<section id="section-13.2">
+        <h3 id="name-informative-references">
+<a href="#section-13.2" class="section-number selfRef">13.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="RFC6973">[RFC6973]</dt>
+        <dd>
+<span class="refAuthor">Cooper, A.</span>, <span class="refAuthor">Tschofenig, H.</span>, <span class="refAuthor">Aboba, B.</span>, <span class="refAuthor">Peterson, J.</span>, <span class="refAuthor">Morris, J.</span>, <span class="refAuthor">Hansen, M.</span>, and <span class="refAuthor">R. Smith</span>, <span class="refTitle">"Privacy Considerations for Internet Protocols"</span>, <span class="seriesInfo">RFC 6973</span>, <span class="seriesInfo">DOI 10.17487/RFC6973</span>, <time datetime="2013-07" class="refDate">July 2013</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6973">https://www.rfc-editor.org/rfc/rfc6973</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC7258">[RFC7258]</dt>
+        <dd>
+<span class="refAuthor">Farrell, S.</span> and <span class="refAuthor">H. Tschofenig</span>, <span class="refTitle">"Pervasive Monitoring Is an Attack"</span>, <span class="seriesInfo">BCP 188</span>, <span class="seriesInfo">RFC 7258</span>, <span class="seriesInfo">DOI 10.17487/RFC7258</span>, <time datetime="2014-05" class="refDate">May 2014</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7258">https://www.rfc-editor.org/rfc/rfc7258</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8446">[RFC8446]</dt>
+      <dd>
+<span class="refAuthor">Rescorla, E.</span>, <span class="refTitle">"The Transport Layer Security (TLS) Protocol Version 1.3"</span>, <span class="seriesInfo">RFC 8446</span>, <span class="seriesInfo">DOI 10.17487/RFC8446</span>, <time datetime="2018-08" class="refDate">August 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8446">https://www.rfc-editor.org/rfc/rfc8446</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</div>
+</section>
+</div>
+<div id="acknowledgments">
+<section id="appendix-A">
+      <h2 id="name-acknowledgments">
+<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
+      </h2>
+<p id="appendix-A-1">This document builds on the foundational work of the IETF AI Preferences Working Group and incorporates concepts from privacy-preserving network monitoring research.<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="appendix-a-privacy-preserving-traffic-analysis-techniques">
+<section id="appendix-B">
+      <h2 id="name-appendix-a-privacy-preservi">
+<a href="#appendix-B" class="section-number selfRef">Appendix B. </a><a href="#name-appendix-a-privacy-preservi" class="section-name selfRef">Appendix A: Privacy-Preserving Traffic Analysis Techniques</a>
+      </h2>
+<div id="a1-differential-privacy-mechanisms">
+<section id="appendix-B.1">
+        <h3 id="name-a1-differential-privacy-mec">
+<a href="#appendix-B.1" class="section-number selfRef">B.1. </a><a href="#name-a1-differential-privacy-mec" class="section-name selfRef">A.1 Differential Privacy Mechanisms</a>
+        </h3>
+<p id="appendix-B.1-1">Laplace mechanism for count queries:
+<code>
+ε = privacy budget
+Δf = sensitivity of query (typically 1 for counts)
+noise ~ Laplace(Δf/ε)
+noisy_result = true_result + noise
+</code><a href="#appendix-B.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="a2-k-anonymity-generalization">
+<section id="appendix-B.2">
+        <h3 id="name-a2-k-anonymity-generalizati">
+<a href="#appendix-B.2" class="section-number selfRef">B.2. </a><a href="#name-a2-k-anonymity-generalizati" class="section-name selfRef">A.2 K-Anonymity Generalization</a>
+        </h3>
+<p id="appendix-B.2-1">IP address generalization hierarchy:
+<code>
+Level 0: 192.168.1.5 (full address)
+Level 1: 192.168.1.0/24 (subnet)
+Level 2: 192.168.0.0/16 (larger subnet)
+Level 3: 192.0.0.0/8 (class A)
+</code><a href="#appendix-B.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="a3-secure-aggregation-protocols">
+<section id="appendix-B.3">
+        <h3 id="name-a3-secure-aggregation-proto">
+<a href="#appendix-B.3" class="section-number selfRef">B.3. </a><a href="#name-a3-secure-aggregation-proto" class="section-name selfRef">A.3 Secure Aggregation Protocols</a>
+        </h3>
+<p id="appendix-B.3-1">Multi-party secure sum for distributed statistics:
+```
+Parties: P1, P2, ..., Pn each with private value vi
+Goal: Compute sum Σvi without revealing individual values<a href="#appendix-B.3-1" class="pilcrow">¶</a></p>
+<p id="appendix-B.3-2">Protocol:
+1. Each Pi generates random shares: vi = si1 + si2 + ... + sin
+2. Pi sends sij to Pj (encrypted)
+3. Each Pj computes partial_sum_j = Σi sij
+4. All parties combine partial sums to get total
+```<a href="#appendix-B.3-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="appendix-b-example-preference-documents">
+<section id="appendix-C">
+      <h2 id="name-appendix-b-example-preferen">
+<a href="#appendix-C" class="section-number selfRef">Appendix C. </a><a href="#name-appendix-b-example-preferen" class="section-name selfRef">Appendix B: Example Preference Documents</a>
+      </h2>
+<div id="b1-isp-fair-usage-policy">
+<section id="appendix-C.1">
+        <h3 id="name-b1-isp-fair-usage-policy">
+<a href="#appendix-C.1" class="section-number selfRef">C.1. </a><a href="#name-b1-isp-fair-usage-policy" class="section-name selfRef">B.1 ISP Fair Usage Policy</a>
+        </h3>
+<p id="appendix-C.1-1"><code>json
+{
+  "version": "aipref-network-1.0",
+  "scope": "network:203.0.113.0/24",
+  "preferences": {
+    "processing-purpose": ["leak-detection", "ddos-protection"],
+    "processing-scope": "aggregate-flows",
+    "identity-level": "pseudonymized",
+    "temporal-granularity": "5min",
+    "retention-period": "24h",
+    "allowed-features": [
+      "volume", "flow-count", "protocol-distribution"
+    ],
+    "forbidden-features": [
+      "dst-ip", "payload", "timing-precision"
+    ],
+    "audit-required": true
+  }
+}
+</code><a href="#appendix-C.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="b2-enterprise-security-monitoring">
+<section id="appendix-C.2">
+        <h3 id="name-b2-enterprise-security-moni">
+<a href="#appendix-C.2" class="section-number selfRef">C.2. </a><a href="#name-b2-enterprise-security-moni" class="section-name selfRef">B.2 Enterprise Security Monitoring</a>
+        </h3>
+<p id="appendix-C.2-1"><code>json
+{
+  "version": "aipref-network-1.0",
+  "scope": "network:10.0.0.0/8",
+  "preferences": {
+    "processing-purpose": ["security-monitoring"],
+    "processing-scope": "metadata-only",
+    "identity-level": "anonymized",
+    "retention-period": "1h",
+    "processing-location": "on-premises",
+    "data-export": "prohibited",
+    "allowed-features": [
+      "volume", "protocol", "flow-count"
+    ],
+    "forbidden-features": [
+      "ip-addresses", "port-numbers", "timing-precision", "payload"
+    ],
+    "audit-required": true,
+    "transparency-level": "full"
+  }
+}
+</code><a href="#appendix-C.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="b3-research-network-with-consent">
+<section id="appendix-C.3">
+        <h3 id="name-b3-research-network-with-co">
+<a href="#appendix-C.3" class="section-number selfRef">C.3. </a><a href="#name-b3-research-network-with-co" class="section-name selfRef">B.3 Research Network with Consent</a>
+        </h3>
+<p id="appendix-C.3-1"><code>json
+{
+  "version": "aipref-network-1.0",
+  "scope": "network:198.51.100.0/24",
+  "preferences": {
+    "processing-purpose": ["research", "performance-analysis"],
+    "processing-scope": "individual-flows",
+    "identity-level": "pseudonymized",
+    "retention-period": "30d",
+    "allowed-features": [
+      "volume", "packet-rate", "flow-duration",
+      "protocol", "packet-size-distribution"
+    ],
+    "consent-obtained": true,
+    "audit-required": true,
+    "data-minimization-required": false
+  }
+}
+</code><a href="#appendix-C.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="appendix-c-ai-agent-compliance-checklist">
+<section id="appendix-D">
+      <h2 id="name-appendix-c-ai-agent-complia">
+<a href="#appendix-D" class="section-number selfRef">Appendix D. </a><a href="#name-appendix-c-ai-agent-complia" class="section-name selfRef">Appendix C: AI Agent Compliance Checklist</a>
+      </h2>
+<p id="appendix-D-1">AI agents processing network traffic <span class="bcp14">SHOULD</span> verify:<a href="#appendix-D-1" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="appendix-D-2.1">
+          <p id="appendix-D-2.1.1">[ ] Preference discovery attempted via all supported mechanisms<a href="#appendix-D-2.1.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="appendix-D-2.2">
+          <p id="appendix-D-2.2.1">[ ] Preferences reconciled correctly when multiple sources exist<a href="#appendix-D-2.2.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="appendix-D-2.3">
+          <p id="appendix-D-2.3.1">[ ] Processing purpose matches allowed purposes<a href="#appendix-D-2.3.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="appendix-D-2.4">
+          <p id="appendix-D-2.4.1">[ ] Processing scope does not exceed preference limits<a href="#appendix-D-2.4.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="appendix-D-2.5">
+          <p id="appendix-D-2.5.1">[ ] Identity protection level meets or exceeds requirements<a href="#appendix-D-2.5.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="appendix-D-2.6">
+          <p id="appendix-D-2.6.1">[ ] Only allowed features are accessed/processed<a href="#appendix-D-2.6.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="appendix-D-2.7">
+          <p id="appendix-D-2.7.1">[ ] Forbidden features are filtered/suppressed<a href="#appendix-D-2.7.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="appendix-D-2.8">
+          <p id="appendix-D-2.8.1">[ ] Temporal aggregation applied per preferences<a href="#appendix-D-2.8.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="appendix-D-2.9">
+          <p id="appendix-D-2.9.1">[ ] Data retention does not exceed specified period<a href="#appendix-D-2.9.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="appendix-D-2.10">
+          <p id="appendix-D-2.10.1">[ ] Processing location constraints satisfied<a href="#appendix-D-2.10.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="appendix-D-2.11">
+          <p id="appendix-D-2.11.1">[ ] Audit logging enabled if required<a href="#appendix-D-2.11.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="appendix-D-2.12">
+          <p id="appendix-D-2.12.1">[ ] Privacy-preserving techniques applied appropriately<a href="#appendix-D-2.12.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="appendix-D-2.13">
+          <p id="appendix-D-2.13.1">[ ] Compliance monitoring active<a href="#appendix-D-2.13.1" class="pilcrow">¶</a></p>
+</li>
+        <li class="normal" id="appendix-D-2.14">
+          <p id="appendix-D-2.14.1">[ ] Default-deny policy applied when preferences unclear<a href="#appendix-D-2.14.1" class="pilcrow">¶</a></p>
+</li>
+      </ul>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-E">
+      <h2 id="name-authors-address">
+<a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Altanai Bisht</span></div>
+<div dir="auto" class="left"><span class="org">Cisco</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:altanai@outlook.com" class="email">altanai@outlook.com</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>
