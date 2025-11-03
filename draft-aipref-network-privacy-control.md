@@ -59,7 +59,7 @@ The increasing deployment of AI-based systems for network monitoring, traffic an
 
 Network operators need to detect and respond to:
 - Unfair usage patterns and bandwidth abuse
-- Network anomalies and potential security threats  
+- Network anomalies and potential security threats
 - Performance degradation and congestion
 - Protocol violations and malicious traffic
 
@@ -210,7 +210,7 @@ Resolution: per-tenant enforcement with strictest-wins policy
 
 Entities that express preferences about AI processing:
 - Network administrators and operators
-- End users and subscriber organizations  
+- End users and subscriber organizations
 - Equipment vendors and service providers
 - Regulatory authorities and policies
 
@@ -261,7 +261,7 @@ Components that enforce preference compliance:
 │ - Flow records                          │
 │ - Metadata                              │
 └────────┬────────────────────────────────┘
-         │ 
+         │
          ▼
 ┌─────────────────────────────────────────┐
 │ Preference Enforcement Points           │
@@ -289,7 +289,7 @@ Define what aspects of network traffic AI agents may access:
 
 - **AI-Processing-Scope**: Controls the level of traffic data access
   - Values: `none`, `metadata-only`, `aggregate-flows`, `individual-flows`, `full-access`
-  
+
 - **AI-Processing-Purpose**: Restricts processing to specific purposes
   - Values: `leak-detection`, `ddos-protection`, `traffic-engineering`, `qos-optimization`, `security-monitoring`, `performance-analysis`
 
@@ -371,7 +371,7 @@ Network traffic features that may be subject to preferences:
 - `inter-arrival-time`, `burst-patterns`
 - `time-of-day-patterns`, `periodicity`
 
-### Statistical Features  
+### Statistical Features
 - `packet-size-distribution`, `flow-size-distribution`
 - `traffic-entropy`, `pattern-regularity`
 
@@ -430,7 +430,7 @@ Forbidden-features: payload, timing-precision
 
 User-agent: TrustedMonitor
 Processing-scope: individual-flows
-Identity-level: pseudonymized  
+Identity-level: pseudonymized
 Retention-period: 7d
 ```
 
@@ -450,7 +450,7 @@ For network management systems, define YANG models:
 module ietf-ai-network-preferences {
   namespace "urn:ietf:params:xml:ns:yang:ietf-ai-network-preferences";
   prefix "aipref";
-  
+
   container ai-preferences {
     leaf processing-scope {
       type enumeration {
@@ -460,7 +460,7 @@ module ietf-ai-network-preferences {
         enum individual-flows;
       }
     }
-    
+
     leaf identity-level {
       type enumeration {
         enum identified;
@@ -468,12 +468,12 @@ module ietf-ai-network-preferences {
         enum anonymized;
       }
     }
-    
+
     leaf retention-period {
       type uint32;
       units "seconds";
     }
-    
+
     leaf-list allowed-purposes {
       type string;
     }
@@ -509,7 +509,7 @@ Result: AI-Identity-Level: anonymized (stricter)
 
 ```
 Preference A: AI-Retention-Period: 7d
-Preference B: AI-Retention-Period: 24h  
+Preference B: AI-Retention-Period: 24h
 Result: AI-Retention-Period: 24h (stricter)
 ```
 
@@ -547,33 +547,33 @@ Result: AI-Allowed-Purposes: ddos-protection, qos
 
 ```
 Algorithm: Reconcile-AI-Preferences(preferences[])
-  
+
   result = new AIPreferenceSet()
-  
+
   // Processing scope - strictest wins
   result.scope = min(preferences.map(p => p.scope))
-  
-  // Identity level - strictest wins  
+
+  // Identity level - strictest wins
   result.identity = strictest(preferences.map(p => p.identity))
-  
+
   // Retention period - shortest wins
   result.retention = min(preferences.map(p => p.retention))
-  
+
   // Allowed features - intersection
   result.allowed_features = intersect(preferences.map(p => p.allowed_features))
-  
+
   // Forbidden features - union
   result.forbidden_features = union(preferences.map(p => p.forbidden_features))
-  
+
   // Allowed purposes - intersection
   result.allowed_purposes = intersect(preferences.map(p => p.allowed_purposes))
-  
+
   // Location constraints - strictest wins
   result.location = strictest(preferences.map(p => p.location))
-  
+
   // Audit requirements - any true makes result true
   result.audit_required = any(preferences.map(p => p.audit_required))
-  
+
   return result
 ```
 
@@ -591,7 +591,7 @@ Ensure that flow records cannot be linked to fewer than k individual sources:
 Original flows:
   192.168.1.5 -> 10.0.0.1 (100MB)
   192.168.1.8 -> 10.0.0.1 (150MB)
-  
+
 K-anonymized (k=10):
   192.168.1.0/28 -> 10.0.0.0/24 (2.5GB, 10 sources)
 ```
@@ -757,14 +757,14 @@ Data Type: string
 Description: URI or token referencing AI preference policy
 Reference: This document
 
-ElementId: TBD2  
+ElementId: TBD2
 Name: aiProcessingScope
 Data Type: unsigned8
 Description: Allowed scope of AI processing
 Reference: This document
 
 ElementId: TBD3
-Name: aiIdentityLevel  
+Name: aiIdentityLevel
 Data Type: unsigned8
 Description: Required identity protection level
 Reference: This document
@@ -782,11 +782,11 @@ Allowed Values: none, metadata-only, aggregate-flows, individual-flows, full-acc
 Reference: This document
 
 Parameter Name: AI-Identity-Level
-Allowed Values: identified, pseudonymized, anonymized, aggregated, no-identity  
+Allowed Values: identified, pseudonymized, anonymized, aggregated, no-identity
 Reference: This document
 
 Parameter Name: AI-Processing-Purpose
-Allowed Values: leak-detection, ddos-protection, traffic-engineering, qos-optimization, 
+Allowed Values: leak-detection, ddos-protection, traffic-engineering, qos-optimization,
                 security-monitoring, performance-analysis
 Reference: This document
 
@@ -822,24 +822,24 @@ Example implementation flow:
 def process_network_traffic(flow_data, ai_agent_id):
     # 1. Discover preferences
     prefs = discover_preferences(flow_data.source_network)
-    
+
     # 2. Reconcile if multiple sources
     effective_prefs = reconcile_preferences(prefs)
-    
+
     # 3. Check if processing is allowed
     if not can_process(ai_agent_id, effective_prefs):
         return None  # Processing not permitted
-    
+
     # 4. Filter and transform data
     filtered_data = apply_preference_filters(flow_data, effective_prefs)
-    
+
     # 5. Apply privacy-preserving techniques
     private_data = apply_privacy_transforms(filtered_data, effective_prefs)
-    
+
     # 6. Audit if required
     if effective_prefs.audit_required:
         log_access(ai_agent_id, flow_data.source, effective_prefs)
-    
+
     # 7. Process with AI
     return ai_agent.analyze(private_data)
 ```
@@ -861,7 +861,7 @@ Network devices (routers, switches, flow collectors) SHOULD:
 Start with coarse-grained preferences and refine over time:
 
 Phase 1: Network-wide default policy
-Phase 2: Per-tenant or per-prefix policies  
+Phase 2: Per-tenant or per-prefix policies
 Phase 3: Per-flow signaling for critical traffic
 Phase 4: Dynamic preference negotiation
 
@@ -921,7 +921,7 @@ AI-Allowed-Features: src-ip, dst-ip, packet-rate, protocol
 ```
 AI-Processing-Purpose: ddos-protection
 AI-Processing-Scope: aggregate-flows
-AI-Identity-Level: anonymized  
+AI-Identity-Level: anonymized
 AI-Allowed-Features: packet-rate, flow-count
 AI-Forbidden-Features: src-ip, dst-ip
 ```
@@ -969,7 +969,7 @@ AI-Transparency-Level: full
 
 **Privacy Protection:**
 - Cannot correlate traffic to individuals or departments
-- Short retention prevents long-term pattern analysis  
+- Short retention prevents long-term pattern analysis
 - On-premises processing prevents data exposure
 - Audit trail for regulatory compliance
 
@@ -1041,7 +1041,7 @@ Goal: Compute sum Σvi without revealing individual values
 Protocol:
 1. Each Pi generates random shares: vi = si1 + si2 + ... + sin
 2. Pi sends sij to Pj (encrypted)
-3. Each Pj computes partial_sum_j = Σi sij  
+3. Each Pj computes partial_sum_j = Σi sij
 4. All parties combine partial sums to get total
 ```
 
@@ -1104,7 +1104,7 @@ Protocol:
     "identity-level": "pseudonymized",
     "retention-period": "30d",
     "allowed-features": [
-      "volume", "packet-rate", "flow-duration", 
+      "volume", "packet-rate", "flow-duration",
       "protocol", "packet-size-distribution"
     ],
     "consent-obtained": true,
